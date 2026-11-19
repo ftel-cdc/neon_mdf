@@ -9,7 +9,7 @@
   <peripherals>
     <peripheral>
       <name>ISP</name>
-      <description>ISP FX1 v1.07; đủ register/field từ sheet Flat Registers của CSR. Địa chỉ base theo BSP VP_FX1_V3.0; không thay thế xác nhận map silicon.</description>
+      <description>ISP FX1 CSR v1.07 + VP extension 0x20261109 (ISP-UPD-001/002/007); FX1 header is authoritative.</description>
       <baseAddress>0x11000000</baseAddress>
       <addressBlock>
         <offset>0</offset>
@@ -313,8 +313,7 @@ Subtracts the sensor's dark pedestal, then optionally rescales the remaining ran
         </register>
         <register>
           <name>BLC_GAIN_SEL</name>
-          <description>BLC: which of the four offset profiles is in use.
-The pedestal varies with the sensor's analogue gain, so four complete sets of offsets are held and selected by this field rather than rewritten per frame. [access=rw]</description>
+          <description>Select BLC profile G0..G7 (ISP-UPD-002). Apply per-channel scale of selected BLC profile; 0 selects unity. [access=rw]</description>
           <addressOffset>0x204</addressOffset>
           <size>32</size>
           <access>read-write</access>
@@ -322,20 +321,14 @@ The pedestal varies with the sensor's analogue gain, so four complete sets of of
           <fields>
             <field>
               <name>GAIN_LEVEL</name>
-              <description>Active Offset Profile Select
-Selects which BLC_OFS_Gn_* and BLC_SCALE_Gn apply.
-0x0 = G0 (Offset profile G0)
-0x1 = G1 (Offset profile G1)
-0x2 = G2 (Offset profile G2)
-0x3 = G3 (Offset profile G3) [access=rw]</description>
+              <description>Select BLC profile G0..G7 (ISP-UPD-002). [access=rw]</description>
               <bitOffset>0</bitOffset>
-              <bitWidth>2</bitWidth>
+              <bitWidth>3</bitWidth>
               <access>read-write</access>
             </field>
             <field>
               <name>RANGE_SCALE_EN</name>
-              <description>Range Rescale Enable
-1 applies the selected BLC_SCALE_Gn after pedestal subtraction. 0 selects exact unity. Reset 1; the value is captured with the frame configuration. [access=rw]</description>
+              <description>Apply per-channel scale of selected BLC profile; 0 selects unity. [access=rw]</description>
               <bitOffset>8</bitOffset>
               <bitWidth>1</bitWidth>
               <access>read-write</access>
@@ -707,19 +700,356 @@ Unsigned 12-bit Bayer code, 0..4095. The shared pedestal and selected channel tr
           </fields>
         </register>
         <register>
-          <name>BLC_SCALE_G0</name>
-          <description>BLC: profile G0 range rescale.
-Applied after the subtraction, to restore full scale to the reduced range. [access=rw]</description>
-          <addressOffset>0x258</addressOffset>
+          <name>BLC_OFS_G4_DFT</name>
+          <description>BLC_OFS_G4_DFT; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x268</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0xc8</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G4_DFT</name>
+              <description>OFS_G4_DFT [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G4_R</name>
+          <description>BLC_OFS_G4_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x26c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G4_R</name>
+              <description>OFS_G4_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G4_GR</name>
+          <description>BLC_OFS_G4_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x270</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G4_GR</name>
+              <description>OFS_G4_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G4_GB</name>
+          <description>BLC_OFS_G4_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x274</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G4_GB</name>
+              <description>OFS_G4_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G4_B</name>
+          <description>BLC_OFS_G4_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x278</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G4_B</name>
+              <description>OFS_G4_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G5_DFT</name>
+          <description>BLC_OFS_G5_DFT; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x27c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0xc8</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G5_DFT</name>
+              <description>OFS_G5_DFT [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G5_R</name>
+          <description>BLC_OFS_G5_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x280</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G5_R</name>
+              <description>OFS_G5_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G5_GR</name>
+          <description>BLC_OFS_G5_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x284</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G5_GR</name>
+              <description>OFS_G5_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G5_GB</name>
+          <description>BLC_OFS_G5_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x288</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G5_GB</name>
+              <description>OFS_G5_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G5_B</name>
+          <description>BLC_OFS_G5_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x28c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G5_B</name>
+              <description>OFS_G5_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G6_DFT</name>
+          <description>BLC_OFS_G6_DFT; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x290</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0xc8</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G6_DFT</name>
+              <description>OFS_G6_DFT [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G6_R</name>
+          <description>BLC_OFS_G6_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x294</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G6_R</name>
+              <description>OFS_G6_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G6_GR</name>
+          <description>BLC_OFS_G6_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x298</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G6_GR</name>
+              <description>OFS_G6_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G6_GB</name>
+          <description>BLC_OFS_G6_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x29c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G6_GB</name>
+              <description>OFS_G6_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G6_B</name>
+          <description>BLC_OFS_G6_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2a0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G6_B</name>
+              <description>OFS_G6_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G7_DFT</name>
+          <description>BLC_OFS_G7_DFT; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2a4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0xc8</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G7_DFT</name>
+              <description>OFS_G7_DFT [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G7_R</name>
+          <description>BLC_OFS_G7_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2a8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G7_R</name>
+              <description>OFS_G7_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G7_GR</name>
+          <description>BLC_OFS_G7_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2ac</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G7_GR</name>
+              <description>OFS_G7_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G7_GB</name>
+          <description>BLC_OFS_G7_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2b0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G7_GB</name>
+              <description>OFS_G7_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_OFS_G7_B</name>
+          <description>BLC_OFS_G7_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2b4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>OFS_G7_B</name>
+              <description>OFS_G7_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>12</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G0_R</name>
+          <description>BLC_SCALE_G0_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2b8</addressOffset>
           <size>32</size>
           <access>read-write</access>
           <resetValue>0x10000</resetValue>
           <fields>
             <field>
-              <name>SCALE_G0</name>
-              <description>Profile G0 Range Rescale
-UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]</description>
+              <name>SCALE_G0_R</name>
+              <description>SCALE_G0_R [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>18</bitWidth>
               <access>read-write</access>
@@ -727,19 +1057,16 @@ The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]<
           </fields>
         </register>
         <register>
-          <name>BLC_SCALE_G1</name>
-          <description>BLC: profile G1 range rescale.
-Applied after the subtraction, to restore full scale to the reduced range. [access=rw]</description>
-          <addressOffset>0x25c</addressOffset>
+          <name>BLC_SCALE_G0_GR</name>
+          <description>BLC_SCALE_G0_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2bc</addressOffset>
           <size>32</size>
           <access>read-write</access>
           <resetValue>0x10000</resetValue>
           <fields>
             <field>
-              <name>SCALE_G1</name>
-              <description>Profile G1 Range Rescale
-UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]</description>
+              <name>SCALE_G0_GR</name>
+              <description>SCALE_G0_GR [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>18</bitWidth>
               <access>read-write</access>
@@ -747,19 +1074,16 @@ The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]<
           </fields>
         </register>
         <register>
-          <name>BLC_SCALE_G2</name>
-          <description>BLC: profile G2 range rescale.
-Applied after the subtraction, to restore full scale to the reduced range. [access=rw]</description>
-          <addressOffset>0x260</addressOffset>
+          <name>BLC_SCALE_G0_GB</name>
+          <description>BLC_SCALE_G0_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2c0</addressOffset>
           <size>32</size>
           <access>read-write</access>
           <resetValue>0x10000</resetValue>
           <fields>
             <field>
-              <name>SCALE_G2</name>
-              <description>Profile G2 Range Rescale
-UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]</description>
+              <name>SCALE_G0_GB</name>
+              <description>SCALE_G0_GB [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>18</bitWidth>
               <access>read-write</access>
@@ -767,19 +1091,492 @@ The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]<
           </fields>
         </register>
         <register>
-          <name>BLC_SCALE_G3</name>
-          <description>BLC: profile G3 range rescale.
-Applied after the subtraction, to restore full scale to the reduced range. [access=rw]</description>
-          <addressOffset>0x264</addressOffset>
+          <name>BLC_SCALE_G0_B</name>
+          <description>BLC_SCALE_G0_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2c4</addressOffset>
           <size>32</size>
           <access>read-write</access>
           <resetValue>0x10000</resetValue>
           <fields>
             <field>
-              <name>SCALE_G3</name>
-              <description>Profile G3 Range Rescale
-UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-The value that exactly restores full scale is 4095/(4095-pedestal). [access=rw]</description>
+              <name>SCALE_G0_B</name>
+              <description>SCALE_G0_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G1_R</name>
+          <description>BLC_SCALE_G1_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2c8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G1_R</name>
+              <description>SCALE_G1_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G1_GR</name>
+          <description>BLC_SCALE_G1_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2cc</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G1_GR</name>
+              <description>SCALE_G1_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G1_GB</name>
+          <description>BLC_SCALE_G1_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2d0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G1_GB</name>
+              <description>SCALE_G1_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G1_B</name>
+          <description>BLC_SCALE_G1_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2d4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G1_B</name>
+              <description>SCALE_G1_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G2_R</name>
+          <description>BLC_SCALE_G2_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2d8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G2_R</name>
+              <description>SCALE_G2_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G2_GR</name>
+          <description>BLC_SCALE_G2_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2dc</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G2_GR</name>
+              <description>SCALE_G2_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G2_GB</name>
+          <description>BLC_SCALE_G2_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2e0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G2_GB</name>
+              <description>SCALE_G2_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G2_B</name>
+          <description>BLC_SCALE_G2_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2e4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G2_B</name>
+              <description>SCALE_G2_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G3_R</name>
+          <description>BLC_SCALE_G3_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2e8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G3_R</name>
+              <description>SCALE_G3_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G3_GR</name>
+          <description>BLC_SCALE_G3_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2ec</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G3_GR</name>
+              <description>SCALE_G3_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G3_GB</name>
+          <description>BLC_SCALE_G3_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2f0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G3_GB</name>
+              <description>SCALE_G3_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G3_B</name>
+          <description>BLC_SCALE_G3_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2f4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G3_B</name>
+              <description>SCALE_G3_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G4_R</name>
+          <description>BLC_SCALE_G4_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2f8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G4_R</name>
+              <description>SCALE_G4_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G4_GR</name>
+          <description>BLC_SCALE_G4_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x2fc</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G4_GR</name>
+              <description>SCALE_G4_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G4_GB</name>
+          <description>BLC_SCALE_G4_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x300</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G4_GB</name>
+              <description>SCALE_G4_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G4_B</name>
+          <description>BLC_SCALE_G4_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x304</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G4_B</name>
+              <description>SCALE_G4_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G5_R</name>
+          <description>BLC_SCALE_G5_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x308</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G5_R</name>
+              <description>SCALE_G5_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G5_GR</name>
+          <description>BLC_SCALE_G5_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x30c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G5_GR</name>
+              <description>SCALE_G5_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G5_GB</name>
+          <description>BLC_SCALE_G5_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x310</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G5_GB</name>
+              <description>SCALE_G5_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G5_B</name>
+          <description>BLC_SCALE_G5_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x314</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G5_B</name>
+              <description>SCALE_G5_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G6_R</name>
+          <description>BLC_SCALE_G6_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x318</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G6_R</name>
+              <description>SCALE_G6_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G6_GR</name>
+          <description>BLC_SCALE_G6_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x31c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G6_GR</name>
+              <description>SCALE_G6_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G6_GB</name>
+          <description>BLC_SCALE_G6_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x320</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G6_GB</name>
+              <description>SCALE_G6_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G6_B</name>
+          <description>BLC_SCALE_G6_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x324</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G6_B</name>
+              <description>SCALE_G6_B [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G7_R</name>
+          <description>BLC_SCALE_G7_R; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x328</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G7_R</name>
+              <description>SCALE_G7_R [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G7_GR</name>
+          <description>BLC_SCALE_G7_GR; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x32c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G7_GR</name>
+              <description>SCALE_G7_GR [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G7_GB</name>
+          <description>BLC_SCALE_G7_GB; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x330</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G7_GB</name>
+              <description>SCALE_G7_GB [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>18</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BLC_SCALE_G7_B</name>
+          <description>BLC_SCALE_G7_B; FX1 VP extension. [access=rw]</description>
+          <addressOffset>0x334</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10000</resetValue>
+          <fields>
+            <field>
+              <name>SCALE_G7_B</name>
+              <description>SCALE_G7_B [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>18</bitWidth>
               <access>read-write</access>
@@ -920,8 +1717,7 @@ Write 1 to discard the partial load and return to idle; self-clearing. The desti
         </register>
         <register>
           <name>LSC_COEF_DATA</name>
-          <description>LSC: coefficient write port.
-The address is implicit and advances on every accepted write, in the order R, Gr, Gb, B within a node, then x, then y. Profile mode additionally rejects sealed, pending and in-flight resident destinations with TUNE_ERROR.LOCKED. [access=rw]</description>
+          <description>Node gain UQ4.18 [21:0]; unity 0x40000, maximum 8x (0x200000), ISP-UPD-001. [access=rw]</description>
           <addressOffset>0x414</addressOffset>
           <size>32</size>
           <access>read-write</access>
@@ -929,10 +1725,9 @@ The address is implicit and advances on every accepted write, in the order R, Gr
           <fields>
             <field>
               <name>COEF_DATA</name>
-              <description>Mesh Coefficient Write Data
-UQ3.18. Legal gain range 0..4 inclusive, codes 0x000000..0x100000; unity is 0x040000. A code above 4.0 sets LSC_ERROR.COEF_RANGE and marks the load invalid; it is still counted. A write after LOAD_FULL is discarded and sets LOAD_PROTOCOL. Scalar load order is R, Gr, Gb, B at each node, then X, then Y. [access=rw]</description>
+              <description>Node gain UQ4.18 [21:0]; unity 0x40000, maximum 8x (0x200000), ISP-UPD-001. [access=rw]</description>
               <bitOffset>0</bitOffset>
-              <bitWidth>21</bitWidth>
+              <bitWidth>22</bitWidth>
               <access>read-write</access>
             </field>
           </fields>
@@ -1677,7 +2472,7 @@ Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/
         </register>
         <register>
           <name>CCM_OFS_R</name>
-          <description>CCM: red offset, added after the matrix. [access=rw]</description>
+          <description>Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007). [access=rw]</description>
           <addressOffset>0x1028</addressOffset>
           <size>32</size>
           <access>read-write</access>
@@ -1685,8 +2480,7 @@ Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/
           <fields>
             <field>
               <name>OFFSET_R</name>
-              <description>Red Post-Matrix Offset
-Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/512. Offsets use the same fractional scale as the accumulator and are added before the final shift. [access=rw]</description>
+              <description>Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007). [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>12</bitWidth>
               <access>read-write</access>
@@ -1695,7 +2489,7 @@ Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/
         </register>
         <register>
           <name>CCM_OFS_G</name>
-          <description>CCM: green offset, added after the matrix. [access=rw]</description>
+          <description>Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007). [access=rw]</description>
           <addressOffset>0x102c</addressOffset>
           <size>32</size>
           <access>read-write</access>
@@ -1703,8 +2497,7 @@ Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/
           <fields>
             <field>
               <name>OFFSET_G</name>
-              <description>Green Post-Matrix Offset
-Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/512. Offsets use the same fractional scale as the accumulator and are added before the final shift. [access=rw]</description>
+              <description>Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007). [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>12</bitWidth>
               <access>read-write</access>
@@ -1713,7 +2506,7 @@ Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/
         </register>
         <register>
           <name>CCM_OFS_B</name>
-          <description>CCM: blue offset, added after the matrix. [access=rw]</description>
+          <description>Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007). [access=rw]</description>
           <addressOffset>0x1030</addressOffset>
           <size>32</size>
           <access>read-write</access>
@@ -1721,8 +2514,7 @@ Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/
           <fields>
             <field>
               <name>OFFSET_B</name>
-              <description>Blue Post-Matrix Offset
-Signed two's-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/512. Offsets use the same fractional scale as the accumulator and are added before the final shift. [access=rw]</description>
+              <description>Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007). [access=rw]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>12</bitWidth>
               <access>read-write</access>
@@ -4412,14 +5204,7 @@ Sticky so a fault that occurred mid-frame survives until software looks. [access
           <fields>
             <field>
               <name>ERR</name>
-              <description>Sticky DMA Error Flags
-W1C, hardware set wins over simultaneous clear. DMA-scope recovery, automatic or commanded, preserves these bits; only W1C, common recovery and hard reset clear them.
-Bit 0 ALIGN: illegal address/stride alignment or geometry, a base-address bit at or above the build address width, or a plane whose last byte reaches 2^ADDR_W; checked at IDMA frame start and ODMA buffer claim. The buffer is not used, its ownership bit clears and the rotation does not advance.
-Bit 1 IDMA_UNDERRUN: enabled idle input DMA has no valid head buffer; stalls without dropping data.
-Bit 2 ODMA_OVERFLOW: pixels await an output buffer; backpressure at a line boundary until one is free.
-Bit 3 AXI_RD: terminal read response error; starts automatic DMA-scope recovery.
-Bit 4 AXI_WR: terminal write response error; starts automatic DMA-scope recovery.
-Bit 5 reserved, reads zero. [access=w1c]</description>
+              <description>ERR; documented width 6, implemented mask 0x1f. [access=w1c]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>6</bitWidth>
               <access>read-write</access>
@@ -4498,15 +5283,7 @@ Four buffers rotate between software and hardware.  Software sets a bit to hand 
           <fields>
             <field>
               <name>IDMA_BUF_VALID</name>
-              <description>Input Buffer Valid Flags
-One bit per input buffer; write 1 to hand a filled buffer to the engine.
-  7:4 unused -- the engine implements four buffers
-Bits at or above the build buffer count read zero and ignore writes.
-Hardware clears a bit when it has finished reading that buffer.
-bit 0 = BUFFER_0 (Address from IDMA_BUF_ADDR_L0/H0)
-bit 1 = BUFFER_1
-bit 2 = BUFFER_2
-bit 3 = BUFFER_3 [access=w1s]</description>
+              <description>IDMA_BUF_VALID; documented width 8, implemented mask 0xf. [access=w1s]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>
@@ -4730,8 +5507,7 @@ Bytes from one chroma line to the next. [access=rw]</description>
           <fields>
             <field>
               <name>ODMA_BUF_FREE</name>
-              <description>Output Buffer Free Flags
-Bits 3:0 identify the four buffers; bits 7:4 are unused. Bits at or above the build buffer count read zero and ignore writes. Write 1 to make a buffer available. Hardware clears the bit when the output frame claims the buffer. Acknowledge DONE before rearming FREE. With no free buffer the pipeline stalls and reports ODMA_OVERFLOW. [access=w1s]</description>
+              <description>ODMA_BUF_FREE; documented width 8, implemented mask 0xf. [access=w1s]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>
@@ -4750,8 +5526,7 @@ Bits 3:0 identify the four buffers; bits 7:4 are unused. Bits at or above the bu
           <fields>
             <field>
               <name>ODMA_BUF_DONE</name>
-              <description>Output Buffer Done Flags
-Bits 3:0 identify buffers; bits 7:4 unused. Hardware sets a bit on complete output-frame retirement. Write 1 to acknowledge, then separately set FREE to permit reuse. A simultaneous completion wins over clear. [access=w1c]</description>
+              <description>ODMA_BUF_DONE; documented width 8, implemented mask 0xf. [access=w1c]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>
@@ -5661,8 +6436,7 @@ Bytes from one chroma line to the next. [access=rw]</description>
           <fields>
             <field>
               <name>ODMA_BUF_FREE</name>
-              <description>Output Buffer Free Flags
-Bits 3:0 identify the four buffers; bits 7:4 are unused. Write 1 to release a buffer to hardware. Hardware clears the bit at frame start. Acknowledge DONE before rearming FREE. With no free buffer the pipeline stalls and reports ODMA_OVERFLOW. [access=w1s]</description>
+              <description>ODMA_BUF_FREE; documented width 8, implemented mask 0xf. [access=w1s]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>
@@ -5681,8 +6455,7 @@ Bits 3:0 identify the four buffers; bits 7:4 are unused. Write 1 to release a bu
           <fields>
             <field>
               <name>ODMA_BUF_DONE</name>
-              <description>Output Buffer Done Flags
-Bits 3:0 identify buffers; bits 7:4 unused. Hardware sets a bit on complete output-frame retirement. Write 1 to acknowledge, then separately set FREE to permit reuse. A simultaneous completion wins over clear. [access=w1c]</description>
+              <description>ODMA_BUF_DONE; documented width 8, implemented mask 0xf. [access=w1c]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>
@@ -6418,8 +7191,7 @@ Bits [63:32] of the DDR address. [access=rw]</description>
           <fields>
             <field>
               <name>ODMA_BUF_FREE</name>
-              <description>Output Buffer Free Flags
-Bits 3:0 identify the four buffers; bits 7:4 are unused. Write 1 to release a buffer to hardware. Hardware clears the bit at frame start. Acknowledge DONE before rearming FREE. With no free buffer the pipeline stalls and reports ODMA_OVERFLOW. [access=w1s]</description>
+              <description>ODMA_BUF_FREE; documented width 8, implemented mask 0xf. [access=w1s]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>
@@ -6438,8 +7210,7 @@ Bits 3:0 identify the four buffers; bits 7:4 are unused. Write 1 to release a bu
           <fields>
             <field>
               <name>ODMA_BUF_DONE</name>
-              <description>Output Buffer Done Flags
-Bits 3:0 identify buffers; bits 7:4 unused. Hardware sets a bit on complete output-frame retirement. Write 1 to acknowledge, then separately set FREE to permit reuse. A simultaneous completion wins over clear. [access=w1c]</description>
+              <description>ODMA_BUF_DONE; documented width 8, implemented mask 0xf. [access=w1c]</description>
               <bitOffset>0</bitOffset>
               <bitWidth>8</bitWidth>
               <access>read-write</access>

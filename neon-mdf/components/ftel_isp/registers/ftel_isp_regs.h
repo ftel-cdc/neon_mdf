@@ -1,13 +1,34 @@
 /*
  * Tên viết tắt, trường bit, giới hạn và macro MMIO dùng bởi driver.
- * Mọi offset R_* và phiên bản ABI lấy từ registers/regmap-v1.07.h.
+ * Mọi offset R_* và phiên bản ABI lấy từ các header regmap-v1.07-*.h.
  */
 #ifndef FTEL_ISP_REGS_H
 #define FTEL_ISP_REGS_H
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "registers/regmap-v1.07.h"
+#include "regmap-v1.07-base.h"
+#include "regmap-v1.07-common.h"
+#include "regmap-v1.07-blc.h"
+#include "regmap-v1.07-lsc.h"
+#include "regmap-v1.07-bpc.h"
+#include "regmap-v1.07-wb.h"
+#include "regmap-v1.07-dg.h"
+#include "regmap-v1.07-demosaic.h"
+#include "regmap-v1.07-ccm.h"
+#include "regmap-v1.07-gamma.h"
+#include "regmap-v1.07-csc.h"
+#include "regmap-v1.07-gtm.h"
+#include "regmap-v1.07-nr.h"
+#include "regmap-v1.07-ee.h"
+#include "regmap-v1.07-cnf.h"
+#include "regmap-v1.07-aec.h"
+#include "regmap-v1.07-awb.h"
+#include "regmap-v1.07-af.h"
+#include "regmap-v1.07-dma.h"
+#include "regmap-v1.07-output.h"
+#include "regmap-v1.07-tune.h"
+#include "regmap-v1.07-layout.h"
 
 /*
  * BSP phải cấp địa chỉ nền CSR đã ánh xạ bằng -DISP_BASE=... hoặc header nền tảng.
@@ -52,7 +73,7 @@ _Static_assert(((uintptr_t)(ISP_BASE) & 3u) == 0u, "ISP_BASE must be 32-bit alig
 #define DMA_CTRL_BURST_MASK         0xFF00u
 #define DMA_CTRL_RESET_VALUE        0x3F00u
 #define DMA_STAT_BUSY_MASK          0x3u
-#define IDMA_BUF_VALID_MASK         0xFu
+#define IDMA_BUF_VALID_MASK         FX1_ISP_IDMA_BUF_VALID_IDMA_BUF_VALID_MASK
 
 /* ---- BLC ---- */
 #define R_BLC_CTRL                       FX1_ISP_BLC_CTRL_OFFSET
@@ -82,10 +103,59 @@ _Static_assert(((uintptr_t)(ISP_BASE) & 3u) == 0u, "ISP_BASE must be 32-bit alig
 #define R_BLC_OFS_G3_GB                  FX1_ISP_BLC_OFS_G3_GB_OFFSET
 #define R_BLC_OFS_G3_B                   FX1_ISP_BLC_OFS_G3_B_OFFSET
 
-#define R_BLC_SCALE_G0                   FX1_ISP_BLC_SCALE_G0_OFFSET
-#define R_BLC_SCALE_G1                   FX1_ISP_BLC_SCALE_G1_OFFSET
-#define R_BLC_SCALE_G2                   FX1_ISP_BLC_SCALE_G2_OFFSET
-#define R_BLC_SCALE_G3                   FX1_ISP_BLC_SCALE_G3_OFFSET
+
+#define R_BLC_OFS_G4_DFT FX1_ISP_BLC_OFS_G4_DFT_OFFSET
+#define R_BLC_OFS_G4_R FX1_ISP_BLC_OFS_G4_R_OFFSET
+#define R_BLC_OFS_G4_GR FX1_ISP_BLC_OFS_G4_GR_OFFSET
+#define R_BLC_OFS_G4_GB FX1_ISP_BLC_OFS_G4_GB_OFFSET
+#define R_BLC_OFS_G4_B FX1_ISP_BLC_OFS_G4_B_OFFSET
+#define R_BLC_OFS_G5_DFT FX1_ISP_BLC_OFS_G5_DFT_OFFSET
+#define R_BLC_OFS_G5_R FX1_ISP_BLC_OFS_G5_R_OFFSET
+#define R_BLC_OFS_G5_GR FX1_ISP_BLC_OFS_G5_GR_OFFSET
+#define R_BLC_OFS_G5_GB FX1_ISP_BLC_OFS_G5_GB_OFFSET
+#define R_BLC_OFS_G5_B FX1_ISP_BLC_OFS_G5_B_OFFSET
+#define R_BLC_OFS_G6_DFT FX1_ISP_BLC_OFS_G6_DFT_OFFSET
+#define R_BLC_OFS_G6_R FX1_ISP_BLC_OFS_G6_R_OFFSET
+#define R_BLC_OFS_G6_GR FX1_ISP_BLC_OFS_G6_GR_OFFSET
+#define R_BLC_OFS_G6_GB FX1_ISP_BLC_OFS_G6_GB_OFFSET
+#define R_BLC_OFS_G6_B FX1_ISP_BLC_OFS_G6_B_OFFSET
+#define R_BLC_OFS_G7_DFT FX1_ISP_BLC_OFS_G7_DFT_OFFSET
+#define R_BLC_OFS_G7_R FX1_ISP_BLC_OFS_G7_R_OFFSET
+#define R_BLC_OFS_G7_GR FX1_ISP_BLC_OFS_G7_GR_OFFSET
+#define R_BLC_OFS_G7_GB FX1_ISP_BLC_OFS_G7_GB_OFFSET
+#define R_BLC_OFS_G7_B FX1_ISP_BLC_OFS_G7_B_OFFSET
+#define R_BLC_SCALE_G0_R FX1_ISP_BLC_SCALE_G0_R_OFFSET
+#define R_BLC_SCALE_G0_GR FX1_ISP_BLC_SCALE_G0_GR_OFFSET
+#define R_BLC_SCALE_G0_GB FX1_ISP_BLC_SCALE_G0_GB_OFFSET
+#define R_BLC_SCALE_G0_B FX1_ISP_BLC_SCALE_G0_B_OFFSET
+#define R_BLC_SCALE_G1_R FX1_ISP_BLC_SCALE_G1_R_OFFSET
+#define R_BLC_SCALE_G1_GR FX1_ISP_BLC_SCALE_G1_GR_OFFSET
+#define R_BLC_SCALE_G1_GB FX1_ISP_BLC_SCALE_G1_GB_OFFSET
+#define R_BLC_SCALE_G1_B FX1_ISP_BLC_SCALE_G1_B_OFFSET
+#define R_BLC_SCALE_G2_R FX1_ISP_BLC_SCALE_G2_R_OFFSET
+#define R_BLC_SCALE_G2_GR FX1_ISP_BLC_SCALE_G2_GR_OFFSET
+#define R_BLC_SCALE_G2_GB FX1_ISP_BLC_SCALE_G2_GB_OFFSET
+#define R_BLC_SCALE_G2_B FX1_ISP_BLC_SCALE_G2_B_OFFSET
+#define R_BLC_SCALE_G3_R FX1_ISP_BLC_SCALE_G3_R_OFFSET
+#define R_BLC_SCALE_G3_GR FX1_ISP_BLC_SCALE_G3_GR_OFFSET
+#define R_BLC_SCALE_G3_GB FX1_ISP_BLC_SCALE_G3_GB_OFFSET
+#define R_BLC_SCALE_G3_B FX1_ISP_BLC_SCALE_G3_B_OFFSET
+#define R_BLC_SCALE_G4_R FX1_ISP_BLC_SCALE_G4_R_OFFSET
+#define R_BLC_SCALE_G4_GR FX1_ISP_BLC_SCALE_G4_GR_OFFSET
+#define R_BLC_SCALE_G4_GB FX1_ISP_BLC_SCALE_G4_GB_OFFSET
+#define R_BLC_SCALE_G4_B FX1_ISP_BLC_SCALE_G4_B_OFFSET
+#define R_BLC_SCALE_G5_R FX1_ISP_BLC_SCALE_G5_R_OFFSET
+#define R_BLC_SCALE_G5_GR FX1_ISP_BLC_SCALE_G5_GR_OFFSET
+#define R_BLC_SCALE_G5_GB FX1_ISP_BLC_SCALE_G5_GB_OFFSET
+#define R_BLC_SCALE_G5_B FX1_ISP_BLC_SCALE_G5_B_OFFSET
+#define R_BLC_SCALE_G6_R FX1_ISP_BLC_SCALE_G6_R_OFFSET
+#define R_BLC_SCALE_G6_GR FX1_ISP_BLC_SCALE_G6_GR_OFFSET
+#define R_BLC_SCALE_G6_GB FX1_ISP_BLC_SCALE_G6_GB_OFFSET
+#define R_BLC_SCALE_G6_B FX1_ISP_BLC_SCALE_G6_B_OFFSET
+#define R_BLC_SCALE_G7_R FX1_ISP_BLC_SCALE_G7_R_OFFSET
+#define R_BLC_SCALE_G7_GR FX1_ISP_BLC_SCALE_G7_GR_OFFSET
+#define R_BLC_SCALE_G7_GB FX1_ISP_BLC_SCALE_G7_GB_OFFSET
+#define R_BLC_SCALE_G7_B FX1_ISP_BLC_SCALE_G7_B_OFFSET
 
 /* ---- LSC ---- */
 #define R_LSC_CTRL                       FX1_ISP_LSC_CTRL_OFFSET
@@ -240,7 +310,7 @@ _Static_assert(((uintptr_t)(ISP_BASE) & 3u) == 0u, "ISP_BASE must be 32-bit alig
 #define BLC_CTRL_EN                 (1u << 0)
 
 /* BLC_GAIN_SEL */
-#define BLC_GAIN_SEL_GAIN_LVL(m)    (((uint32_t)(m) & 0x3u) << 0)
+#define BLC_GAIN_SEL_GAIN_LVL(m)    (((uint32_t)(m) << FX1_ISP_BLC_GAIN_SEL_GAIN_LEVEL_SHIFT) & FX1_ISP_BLC_GAIN_SEL_GAIN_LEVEL_MASK)
 #define BLC_GAIN_SEL_RANGE_SCALE    (1u << 8)
 
 /* LSC_CTRL */
@@ -263,7 +333,7 @@ _Static_assert(((uintptr_t)(ISP_BASE) & 3u) == 0u, "ISP_BASE must be 32-bit alig
 #define LSC_LOAD_CTRL_ABORT         (1u << 10)   /* W1S */
 
 /* LSC_COEF_DATA */
-#define LSC_COEF_DATA_MASK          0x1FFFFFu
+#define LSC_COEF_DATA_MASK          FX1_ISP_LSC_COEF_DATA_COEF_DATA_MASK
 
 /* LSC_LOAD_STATUS */
 #define LSC_LOAD_STATUS_ADDR        0xFFFFu
@@ -452,8 +522,8 @@ typedef enum {
 #define LSC_COEFS_PER_NODE          4u
 #define LSC_STRENGTH_UNITY          0x10000u
 #define LSC_STRENGTH_DEFAULT        0x10000u
-#define LSC_COEF_UNITY              0x040000u   /* UQ3.18; hệ số hợp lệ 0..4. */
-#define LSC_COEF_MAX                0x100000u   /* Mã hợp lệ lớn nhất biểu diễn hệ số 4x. */
+#define LSC_COEF_UNITY              0x040000u   /* UQ4.18; hệ số hợp lệ 0..8. */
+#define LSC_COEF_MAX                0x200000u   /* ISP-UPD-001: hệ số tối đa 8x. */
 #define LSC_LOAD_POLL_MAX           100000u
 
 /* BPC */

@@ -54,7 +54,7 @@ typedef struct {
 
 /*
  * Nạp một profile: BEGIN, ghi đúng 4*nx*ny hệ số rồi VALIDATE. coefs phải đủ lsc_coef_count() phần
- * tử UQ3.18, hệ số 1x = LSC_COEF_UNITY (0x040000), tối đa LSC_COEF_MAX. cfg phải khớp hình học
+ * tử UQ4.18, hệ số 1x = LSC_COEF_UNITY (0x040000), tối đa LSC_COEF_MAX. cfg phải khớp hình học
  * LSC_MESH_NODES đã lập trình. Xóa lỗi trước BEGIN, kiểm tra mọi hệ số trước khi nạp, hủy chuỗi
  * thiếu và chỉ thành công khi VALID(profile) được đặt. Từ chối đích đang hoạt động; chờ quá hạn
  * trả ISP_E_TIMEOUT.

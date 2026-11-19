@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "yuv domain/gtm/ftel_isp_gtm.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 void gtm_get_default_config(gtm_config_t *cfg)
 {
     if (!cfg) return;

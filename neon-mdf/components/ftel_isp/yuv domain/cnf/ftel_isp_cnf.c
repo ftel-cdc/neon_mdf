@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "yuv domain/cnf/ftel_isp_cnf.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void cnf_get_default_config(cnf_config_t *cfg)
 {

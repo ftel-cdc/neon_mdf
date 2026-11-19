@@ -93,7 +93,7 @@ isp_status_t ftel_isp_fx1_prepare_config(const ftel_isp_config_t *config,
     blc_get_default_config(&backend->blc);
     backend->blc.enable = config->bayer.blc.enable;
     backend->blc.range_scale_en = false;
-    for (unsigned i = 0; i < 4; ++i) backend->blc.profile[i].dft = config->bayer.blc.black_level;
+    for (unsigned i = 0; i < BLC_NUM_PROFILES; ++i) backend->blc.profile[i].dft = config->bayer.blc.black_level;
     bpc_get_default_config(&backend->bpc);
     backend->bpc.enable = config->bayer.bpc.enable;
     wb_get_default_config(&backend->wb);

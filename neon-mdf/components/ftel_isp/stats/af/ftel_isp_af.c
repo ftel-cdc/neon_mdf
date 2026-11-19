@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "stats/af/ftel_isp_af.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void af_get_default_config(af_config_t *cfg)
 {

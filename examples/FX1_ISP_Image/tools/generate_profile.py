@@ -64,11 +64,13 @@ def array(name, field, count):
 
 scalar('ifmt.bayer', 'COMMON_BAYER')
 scalar('blc.enable', 'BLC_CTRL', mask=1)
-require(get('BLC_GAIN_SEL') & 3 == 0, 'Profile schema configures BLC gain group 0 only')
-scalar('blc.gain_level', 'BLC_GAIN_SEL', mask=3)
+require(get('BLC_GAIN_SEL') & 7 == 0, 'Profile schema configures BLC gain group 0 only')
+scalar('blc.gain_level', 'BLC_GAIN_SEL', mask=7)
 scalar('blc.range_scale_en', 'BLC_GAIN_SEL', 8, 1)
 scalar('blc.profile[0].dft', 'BLC_OFS_G0_DFT')
-scalar('blc.profile[0].scale', 'BLC_SCALE_G0')
+put('blc.profile[0].per_channel_scale', 'true')
+for channel, name in enumerate(['R', 'GR', 'GB', 'B']):
+    scalar(f'blc.profile[0].channel_scale[{channel}]', 'BLC_SCALE_G0_' + name, mask=0x3ffff)
 for block in ['wb', 'dg', 'bpc', 'ccm', 'gamma', 'gtm', 'nr', 'ee', 'cnf', 'aec', 'awb', 'af']:
     scalar(f'{block}.enable', 'NR_2D_CTRL' if block == 'nr' else block.upper() + '_CTRL', mask=1)
 for channel in ['r', 'g', 'b']:

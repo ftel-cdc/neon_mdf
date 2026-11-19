@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "io/output/ftel_isp_output.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 static const uint16_t targets[22][2] = {
     {0,0}, {3840,2160}, {2560,1440}, {2880,1620}, {2304,1296}, {1920,1080},
     {1280,720}, {960,540}, {640,360}, {2592,1944}, {2048,1536}, {1600,1200},

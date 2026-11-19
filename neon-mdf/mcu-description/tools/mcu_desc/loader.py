@@ -83,6 +83,7 @@ def load_device(path: str, profile: str = "normal") -> model.Device:
                         description=fl.get("description", ""),
                         access=fl.get("access"),
                         reset=fl.get("reset"),
+                        mask=fl.get("mask"),
                     )
                     for k, fl in enumerate(raw_fields)
                 ]
@@ -104,6 +105,8 @@ def load_device(path: str, profile: str = "normal") -> model.Device:
                             f"{fctx}: bitfield exceeds register width {r.get('size', 32)} bit"
                         )
                     fld_mask = ((1 << fld.bit_width) - 1) << fld.bit_offset
+                    if fld.mask is not None and (fld.mask <= 0 or fld.mask & ~fld_mask):
+                        raise DeviceDescriptionError(f"{fctx}: mask exceeds field width or is empty")
                     if field_bits & fld_mask:
                         raise DeviceDescriptionError(
                             f"{fctx}: bitfield overlaps with preceding field"

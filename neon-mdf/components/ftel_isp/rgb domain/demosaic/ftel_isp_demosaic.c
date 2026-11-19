@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "rgb domain/demosaic/ftel_isp_demosaic.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void demosaic_get_default_config(demosaic_config_t *cfg)
 {

@@ -56,6 +56,8 @@ def validate(device):
                 _require(0 <= field.bit_offset < 32 and 1 <= field.bit_width <= 32 - field.bit_offset,
                          "field vượt 32 bit: " + fctx)
                 mask = ((1 << field.bit_width) - 1) << field.bit_offset
+                _require(field.mask is None or (field.mask > 0 and not field.mask & ~mask),
+                         "mask ngoài field: " + fctx)
                 _require(not used & mask, "field chồng bit: " + fctx)
                 used |= mask
                 _require((field.access or reg.access) in ACCESS, "access field sai: " + fctx)
@@ -76,6 +78,7 @@ def register_header(device):
              "/* Access UNKNOWN/reset không có nguồn: không suy diễn thành RW/0. */",
              "#ifndef NEON_FX1_REGISTERS_H", "#define NEON_FX1_REGISTERS_H",
              "#include <stdint.h>", "#include <stddef.h>",
+             '#include "fx1_isp/fx1_isp_csr.h"',
              "#ifdef __cplusplus", "#define NEON_FX1_OFFSET_ASSERT static_assert", "#else",
              "#define NEON_FX1_OFFSET_ASSERT _Static_assert", "#endif"]
     for access, number in ACCESS.items():
@@ -95,7 +98,7 @@ def register_header(device):
             masks = {a: 0 for a in ACCESS if a != "mixed"}
             for field in reg.fields:
                 fkey = key + "_" + field.name
-                mask = ((1 << field.bit_width) - 1) << field.bit_offset
+                mask = field.mask if field.mask is not None else ((1 << field.bit_width) - 1) << field.bit_offset
                 access = field.access or reg.access
                 masks[access] |= mask
                 lines += [f"/* {_comment(field.description)} */",
@@ -124,6 +127,19 @@ def register_header(device):
             lines.append(f'NEON_FX1_OFFSET_ASSERT(offsetof({prefix}_Regs_t, {reg.name}) == '
                          f'{prefix}_{reg.name}_OFFSET, "{p.name}.{reg.name}");')
     lines += ["#undef NEON_FX1_OFFSET_ASSERT", "#endif", ""]
+    # Public ISP names resolve to the canonical FX1 BSP definitions.
+    isp = next(p for p in device.peripherals if p.name == "ISP")
+    aliases = set()
+    for reg in isp.registers:
+        key = "NEON_FX1_ISP_" + reg.name
+        aliases.update(key + "_" + suffix for suffix in ("OFFSET", "RESET"))
+        for field in reg.fields:
+            aliases.update(key + "_" + field.name + "_" + suffix
+                           for suffix in ("SHIFT", "WIDTH", "MASK", "RESET"))
+    for i, line in enumerate(lines):
+        match = re.fullmatch(r"#define (\w+) (?:0x[0-9A-Fa-f]+|[0-9]+)u", line)
+        if match and match[1] in aliases:
+            lines[i] = f"#define {match[1]} {match[1][5:]}"
     return "\n".join(lines)
 
 

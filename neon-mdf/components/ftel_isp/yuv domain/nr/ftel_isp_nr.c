@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "yuv domain/nr/ftel_isp_nr.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void nr_get_default_config(nr_config_t *cfg)
 {

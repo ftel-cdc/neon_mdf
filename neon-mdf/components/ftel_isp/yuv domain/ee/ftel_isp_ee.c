@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "yuv domain/ee/ftel_isp_ee.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 void ee_get_default_config(ee_config_t *cfg)
 {
     if (!cfg) return;

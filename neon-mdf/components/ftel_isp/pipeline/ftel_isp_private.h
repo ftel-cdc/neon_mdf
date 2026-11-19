@@ -4,7 +4,7 @@
 /* Chỉ lớp hiện thực nhìn thấy driver và regmap FX1. */
 #include "ftel_isp.h"
 #include "platform/fx1/ftel_isp_platform.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 #include "bayer domain/ifmt/ftel_isp_ifmt.h"
 #include "bayer domain/blc/ftel_isp_blc.h"
 #include "bayer domain/bpc/ftel_isp_bpc.h"

@@ -1,0 +1,17 @@
+/* CSC register aliases and access masks. */
+#ifndef FTEL_FX1_ISP_REGMAP_V107_CSC_H
+#define FTEL_FX1_ISP_REGMAP_V107_CSC_H
+#include "regmap-v1.07-base.h"
+
+/* CSC_CTRL: rw */
+#define REG_CSC_CTRL FX1_ISP_CSC_CTRL_OFFSET
+#define FX1_ISP_CSC_CTRL_ACCESS FX1_ISP_ACCESS_RW
+#define FX1_ISP_CSC_CTRL_RO_MASK (0u)
+#define FX1_ISP_CSC_CTRL_RW_MASK (FX1_ISP_CSC_CTRL_STD_MASK)
+#define FX1_ISP_CSC_CTRL_W1C_MASK (0u)
+#define FX1_ISP_CSC_CTRL_W1S_MASK (0u)
+#define FX1_ISP_CSC_CTRL_W1P_MASK (0u)
+#define FX1_ISP_CSC_CTRL_W1SC_MASK (0u)
+#define FX1_ISP_CSC_CTRL_STD_ACCESS FX1_ISP_ACCESS_RW
+
+#endif

@@ -119,6 +119,7 @@ peripherals:                 # peripheral list, used to create CMSIS device head
           # - name: string
           #   bit_offset: int
           #   bit_width: int
+          #   mask: hex # optional implemented bits, a nonempty subset of the field
           #   description: string
         aliases: []                 # (optional) superimposed view addresses, e.g. UART RBR/DLL/THR
           # - name: string

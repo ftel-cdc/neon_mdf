@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "common/ftel_isp_common.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void isp_barrier(void)
 {

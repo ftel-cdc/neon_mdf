@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "io/dma/ftel_isp_dma.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 static uint32_t aligned(uint32_t n, uint32_t alignment) { return (n+alignment-1u)&~(alignment-1u); }
 void dma_get_default_config(dma_config_t *cfg, uint16_t input_w, const output_geometry_t g[3])
 {
@@ -114,7 +114,7 @@ void dma_read_frame_status(dma_frame_status_t *s)
         s->output_count[c] = REG_RD(output_free[c] + 8u);
     }
     s->busy = REG_RD(R_DMA_STAT) & DMA_STAT_BUSY_MASK;
-    s->errors = REG_RD(R_DMA_ERR);
+    s->errors = REG_RD(R_DMA_ERR) & FX1_ISP_DMA_ERR_ERR_MASK;
     s->irq = REG_RD(FX1_ISP_DMA_IRQ_STAT_OFFSET);
     s->common_irq = REG_RD(R_COMMON_IRQ_STATUS);
     s->output_irq = REG_RD(FX1_ISP_OUTPUT_IRQ_STATUS_OFFSET);

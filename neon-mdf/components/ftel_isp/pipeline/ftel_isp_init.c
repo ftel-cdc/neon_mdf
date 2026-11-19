@@ -3,7 +3,7 @@
  * Thứ tự đọc: cấu hình mặc định -> kiểm tra -> các hàm hỗ trợ -> isp_init().
  */
 #include "pipeline/ftel_isp_init.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 const char *isp_init_stage_name(isp_init_stage_t stage)
 {

@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "rgb domain/csc/ftel_isp_csc.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void csc_get_default_config(csc_config_t *cfg)
 {

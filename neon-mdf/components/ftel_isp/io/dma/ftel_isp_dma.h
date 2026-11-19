@@ -27,8 +27,8 @@ isp_status_t dma_configure(const dma_config_t *cfg, uint16_t input_w, uint16_t i
                            const output_geometry_t geometry[3]);
 
 /* Bốn slot thật của FX1; các bit 7:4 trong regmap là phần dành cho build khác. */
-#define DMA_SLOT_MASK 0x0fu
-#define DMA_ERROR_INPUT_PAUSED (1u << 1)
+#define DMA_SLOT_MASK FX1_ISP_IDMA_BUF_VALID_IDMA_BUF_VALID_MASK
+#define DMA_ERROR_INPUT_PAUSED FX1_ISP_DMA_ERR_ERR_IDMA_UNDERRUN_BIT
 typedef struct {
     uint32_t input_valid, input_count;
     uint32_t output_free[3], output_done[3], output_count[3];

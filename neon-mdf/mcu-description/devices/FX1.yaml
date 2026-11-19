@@ -1,7 +1,7 @@
 # FX1 trên VP_FX1_V3.0 — không phải bản mô tả đầy đủ silicon.
 # CPU/platform: fx1/sw/bootloader/sources/VP_FX1_V3.0/include/fx1/fx1_memory_map.h
 # và vp/doc/VP_FX1_V3.0/MEMORY_MAP.md. Startup/linker tái dùng BSP này.
-# ISP: nhập đầy đủ từ CSR v1.07, kiểm tra độc lập với regmap-v1.07.h.
+# ISP: nhập đầy đủ từ CSR v1.07, kiểm tra độc lập với các header regmap-v1.07-*.h.
 # max_freq_hz = 0: chưa biết CPU clock; tick lấy mtime_hz, KHÔNG lấy CPU clock.
 # reset: null = chưa được nguồn xác nhận; KHÔNG được hiểu thành reset bằng 0.
 # access: unknown = nguồn chưa xác nhận quyền; không dùng để viết driver tự động.
@@ -40,12 +40,10 @@ memory:
     size: 0x20000000
 peripherals:
 # BEGIN ISP: sinh bởi tools/import_fx1_isp.py; sửa nguồn CSR rồi nhập lại.
-# CSR v1.07: FTEL_IP_ISP_CSR_v1.07.xlsx; SHA256 8a8dfa3eca6f2df26d26c4783b77bbc75373abcb15460342bf072871122961c5
-# regmap v1.07: regmap-v1.07.h; SHA256 44c726159a5f5ff05f6ef5eb913a760078d0991bbffce2d799737ba963e831e3
+# FX1 header: fx1_isp_csr.h; SHA256 b512b8e3f01182cf03208748196135be7bcbec413af51f629f2e63509bf29796
   - name: ISP
     base: 0x11000000
-    description: ISP FX1 v1.07; đủ register/field từ sheet Flat Registers của CSR. Địa chỉ base theo BSP VP_FX1_V3.0;
-      không thay thế xác nhận map silicon.
+    description: ISP FX1 CSR v1.07 + VP extension 0x20261109 (ISP-UPD-001/002/007); FX1 header is authoritative.
     registers:
       - name: COMMON_VER_DATE
         offset: 0x00000000
@@ -335,36 +333,21 @@ peripherals:
         size: 32
         access: rw
         reset: 0x00000100
-        description: 'BLC: which of the four offset profiles is in use.
-
-          The pedestal varies with the sensor''s analogue gain, so four complete sets of offsets are held and selected
-          by this field rather than rewritten per frame.'
+        description: Select BLC profile G0..G7 (ISP-UPD-002). Apply per-channel scale of selected BLC profile; 0 selects
+          unity.
         fields:
           - name: GAIN_LEVEL
             bit_offset: 0
-            bit_width: 2
+            bit_width: 3
             access: rw
             reset: 0x00000000
-            description: 'Active Offset Profile Select
-
-              Selects which BLC_OFS_Gn_* and BLC_SCALE_Gn apply.
-
-              0x0 = G0 (Offset profile G0)
-
-              0x1 = G1 (Offset profile G1)
-
-              0x2 = G2 (Offset profile G2)
-
-              0x3 = G3 (Offset profile G3)'
+            description: Select BLC profile G0..G7 (ISP-UPD-002).
           - name: RANGE_SCALE_EN
             bit_offset: 8
             bit_width: 1
             access: rw
             reset: 0x00000001
-            description: 'Range Rescale Enable
-
-              1 applies the selected BLC_SCALE_Gn after pedestal subtraction. 0 selects exact unity. Reset 1; the
-              value is captured with the frame configuration.'
+            description: Apply per-channel scale of selected BLC profile; 0 selects unity.
       - name: BLC_OFS_G0_DFT
         offset: 0x00000208
         size: 32
@@ -693,82 +676,682 @@ peripherals:
 
               Unsigned 12-bit Bayer code, 0..4095. The shared pedestal and selected channel trim are added exactly
               in 13 bits before subtraction, without wrap or saturation; the residual clamps at zero. Reset 0.'
-      - name: BLC_SCALE_G0
-        offset: 0x00000258
+      - name: BLC_OFS_G4_DFT
+        offset: 0x00000268
+        size: 32
+        access: rw
+        reset: 0x000000C8
+        description: BLC_OFS_G4_DFT; FX1 VP extension.
+        fields:
+          - name: OFS_G4_DFT
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x000000C8
+            description: OFS_G4_DFT
+      - name: BLC_OFS_G4_R
+        offset: 0x0000026C
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G4_R; FX1 VP extension.
+        fields:
+          - name: OFS_G4_R
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G4_R
+      - name: BLC_OFS_G4_GR
+        offset: 0x00000270
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G4_GR; FX1 VP extension.
+        fields:
+          - name: OFS_G4_GR
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G4_GR
+      - name: BLC_OFS_G4_GB
+        offset: 0x00000274
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G4_GB; FX1 VP extension.
+        fields:
+          - name: OFS_G4_GB
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G4_GB
+      - name: BLC_OFS_G4_B
+        offset: 0x00000278
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G4_B; FX1 VP extension.
+        fields:
+          - name: OFS_G4_B
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G4_B
+      - name: BLC_OFS_G5_DFT
+        offset: 0x0000027C
+        size: 32
+        access: rw
+        reset: 0x000000C8
+        description: BLC_OFS_G5_DFT; FX1 VP extension.
+        fields:
+          - name: OFS_G5_DFT
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x000000C8
+            description: OFS_G5_DFT
+      - name: BLC_OFS_G5_R
+        offset: 0x00000280
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G5_R; FX1 VP extension.
+        fields:
+          - name: OFS_G5_R
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G5_R
+      - name: BLC_OFS_G5_GR
+        offset: 0x00000284
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G5_GR; FX1 VP extension.
+        fields:
+          - name: OFS_G5_GR
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G5_GR
+      - name: BLC_OFS_G5_GB
+        offset: 0x00000288
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G5_GB; FX1 VP extension.
+        fields:
+          - name: OFS_G5_GB
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G5_GB
+      - name: BLC_OFS_G5_B
+        offset: 0x0000028C
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G5_B; FX1 VP extension.
+        fields:
+          - name: OFS_G5_B
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G5_B
+      - name: BLC_OFS_G6_DFT
+        offset: 0x00000290
+        size: 32
+        access: rw
+        reset: 0x000000C8
+        description: BLC_OFS_G6_DFT; FX1 VP extension.
+        fields:
+          - name: OFS_G6_DFT
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x000000C8
+            description: OFS_G6_DFT
+      - name: BLC_OFS_G6_R
+        offset: 0x00000294
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G6_R; FX1 VP extension.
+        fields:
+          - name: OFS_G6_R
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G6_R
+      - name: BLC_OFS_G6_GR
+        offset: 0x00000298
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G6_GR; FX1 VP extension.
+        fields:
+          - name: OFS_G6_GR
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G6_GR
+      - name: BLC_OFS_G6_GB
+        offset: 0x0000029C
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G6_GB; FX1 VP extension.
+        fields:
+          - name: OFS_G6_GB
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G6_GB
+      - name: BLC_OFS_G6_B
+        offset: 0x000002A0
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G6_B; FX1 VP extension.
+        fields:
+          - name: OFS_G6_B
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G6_B
+      - name: BLC_OFS_G7_DFT
+        offset: 0x000002A4
+        size: 32
+        access: rw
+        reset: 0x000000C8
+        description: BLC_OFS_G7_DFT; FX1 VP extension.
+        fields:
+          - name: OFS_G7_DFT
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x000000C8
+            description: OFS_G7_DFT
+      - name: BLC_OFS_G7_R
+        offset: 0x000002A8
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G7_R; FX1 VP extension.
+        fields:
+          - name: OFS_G7_R
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G7_R
+      - name: BLC_OFS_G7_GR
+        offset: 0x000002AC
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G7_GR; FX1 VP extension.
+        fields:
+          - name: OFS_G7_GR
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G7_GR
+      - name: BLC_OFS_G7_GB
+        offset: 0x000002B0
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G7_GB; FX1 VP extension.
+        fields:
+          - name: OFS_G7_GB
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G7_GB
+      - name: BLC_OFS_G7_B
+        offset: 0x000002B4
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: BLC_OFS_G7_B; FX1 VP extension.
+        fields:
+          - name: OFS_G7_B
+            bit_offset: 0
+            bit_width: 12
+            access: rw
+            reset: 0x00000000
+            description: OFS_G7_B
+      - name: BLC_SCALE_G0_R
+        offset: 0x000002B8
         size: 32
         access: rw
         reset: 0x00010000
-        description: 'BLC: profile G0 range rescale.
-
-          Applied after the subtraction, to restore full scale to the reduced range.'
+        description: BLC_SCALE_G0_R; FX1 VP extension.
         fields:
-          - name: SCALE_G0
+          - name: SCALE_G0_R
             bit_offset: 0
             bit_width: 18
             access: rw
             reset: 0x00010000
-            description: 'Profile G0 Range Rescale
-
-              UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-
-              The value that exactly restores full scale is 4095/(4095-pedestal).'
-      - name: BLC_SCALE_G1
-        offset: 0x0000025C
+            description: SCALE_G0_R
+      - name: BLC_SCALE_G0_GR
+        offset: 0x000002BC
         size: 32
         access: rw
         reset: 0x00010000
-        description: 'BLC: profile G1 range rescale.
-
-          Applied after the subtraction, to restore full scale to the reduced range.'
+        description: BLC_SCALE_G0_GR; FX1 VP extension.
         fields:
-          - name: SCALE_G1
+          - name: SCALE_G0_GR
             bit_offset: 0
             bit_width: 18
             access: rw
             reset: 0x00010000
-            description: 'Profile G1 Range Rescale
-
-              UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-
-              The value that exactly restores full scale is 4095/(4095-pedestal).'
-      - name: BLC_SCALE_G2
-        offset: 0x00000260
+            description: SCALE_G0_GR
+      - name: BLC_SCALE_G0_GB
+        offset: 0x000002C0
         size: 32
         access: rw
         reset: 0x00010000
-        description: 'BLC: profile G2 range rescale.
-
-          Applied after the subtraction, to restore full scale to the reduced range.'
+        description: BLC_SCALE_G0_GB; FX1 VP extension.
         fields:
-          - name: SCALE_G2
+          - name: SCALE_G0_GB
             bit_offset: 0
             bit_width: 18
             access: rw
             reset: 0x00010000
-            description: 'Profile G2 Range Rescale
-
-              UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-
-              The value that exactly restores full scale is 4095/(4095-pedestal).'
-      - name: BLC_SCALE_G3
-        offset: 0x00000264
+            description: SCALE_G0_GB
+      - name: BLC_SCALE_G0_B
+        offset: 0x000002C4
         size: 32
         access: rw
         reset: 0x00010000
-        description: 'BLC: profile G3 range rescale.
-
-          Applied after the subtraction, to restore full scale to the reduced range.'
+        description: BLC_SCALE_G0_B; FX1 VP extension.
         fields:
-          - name: SCALE_G3
+          - name: SCALE_G0_B
             bit_offset: 0
             bit_width: 18
             access: rw
             reset: 0x00010000
-            description: 'Profile G3 Range Rescale
-
-              UQ2.16 multiplier; 0x10000 = 1.0 = no rescale.
-
-              The value that exactly restores full scale is 4095/(4095-pedestal).'
+            description: SCALE_G0_B
+      - name: BLC_SCALE_G1_R
+        offset: 0x000002C8
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G1_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G1_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G1_R
+      - name: BLC_SCALE_G1_GR
+        offset: 0x000002CC
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G1_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G1_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G1_GR
+      - name: BLC_SCALE_G1_GB
+        offset: 0x000002D0
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G1_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G1_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G1_GB
+      - name: BLC_SCALE_G1_B
+        offset: 0x000002D4
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G1_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G1_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G1_B
+      - name: BLC_SCALE_G2_R
+        offset: 0x000002D8
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G2_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G2_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G2_R
+      - name: BLC_SCALE_G2_GR
+        offset: 0x000002DC
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G2_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G2_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G2_GR
+      - name: BLC_SCALE_G2_GB
+        offset: 0x000002E0
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G2_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G2_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G2_GB
+      - name: BLC_SCALE_G2_B
+        offset: 0x000002E4
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G2_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G2_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G2_B
+      - name: BLC_SCALE_G3_R
+        offset: 0x000002E8
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G3_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G3_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G3_R
+      - name: BLC_SCALE_G3_GR
+        offset: 0x000002EC
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G3_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G3_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G3_GR
+      - name: BLC_SCALE_G3_GB
+        offset: 0x000002F0
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G3_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G3_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G3_GB
+      - name: BLC_SCALE_G3_B
+        offset: 0x000002F4
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G3_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G3_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G3_B
+      - name: BLC_SCALE_G4_R
+        offset: 0x000002F8
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G4_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G4_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G4_R
+      - name: BLC_SCALE_G4_GR
+        offset: 0x000002FC
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G4_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G4_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G4_GR
+      - name: BLC_SCALE_G4_GB
+        offset: 0x00000300
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G4_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G4_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G4_GB
+      - name: BLC_SCALE_G4_B
+        offset: 0x00000304
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G4_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G4_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G4_B
+      - name: BLC_SCALE_G5_R
+        offset: 0x00000308
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G5_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G5_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G5_R
+      - name: BLC_SCALE_G5_GR
+        offset: 0x0000030C
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G5_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G5_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G5_GR
+      - name: BLC_SCALE_G5_GB
+        offset: 0x00000310
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G5_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G5_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G5_GB
+      - name: BLC_SCALE_G5_B
+        offset: 0x00000314
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G5_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G5_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G5_B
+      - name: BLC_SCALE_G6_R
+        offset: 0x00000318
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G6_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G6_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G6_R
+      - name: BLC_SCALE_G6_GR
+        offset: 0x0000031C
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G6_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G6_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G6_GR
+      - name: BLC_SCALE_G6_GB
+        offset: 0x00000320
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G6_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G6_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G6_GB
+      - name: BLC_SCALE_G6_B
+        offset: 0x00000324
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G6_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G6_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G6_B
+      - name: BLC_SCALE_G7_R
+        offset: 0x00000328
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G7_R; FX1 VP extension.
+        fields:
+          - name: SCALE_G7_R
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G7_R
+      - name: BLC_SCALE_G7_GR
+        offset: 0x0000032C
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G7_GR; FX1 VP extension.
+        fields:
+          - name: SCALE_G7_GR
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G7_GR
+      - name: BLC_SCALE_G7_GB
+        offset: 0x00000330
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G7_GB; FX1 VP extension.
+        fields:
+          - name: SCALE_G7_GB
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G7_GB
+      - name: BLC_SCALE_G7_B
+        offset: 0x00000334
+        size: 32
+        access: rw
+        reset: 0x00010000
+        description: BLC_SCALE_G7_B; FX1 VP extension.
+        fields:
+          - name: SCALE_G7_B
+            bit_offset: 0
+            bit_width: 18
+            access: rw
+            reset: 0x00010000
+            description: SCALE_G7_B
       - name: LSC_CTRL
         offset: 0x00000400
         size: 32
@@ -908,21 +1491,14 @@ peripherals:
         size: 32
         access: rw
         reset: 0x00000000
-        description: 'LSC: coefficient write port.
-
-          The address is implicit and advances on every accepted write, in the order R, Gr, Gb, B within a node, then
-          x, then y. Profile mode additionally rejects sealed, pending and in-flight resident destinations with TUNE_ERROR.LOCKED.'
+        description: Node gain UQ4.18 [21:0]; unity 0x40000, maximum 8x (0x200000), ISP-UPD-001.
         fields:
           - name: COEF_DATA
             bit_offset: 0
-            bit_width: 21
+            bit_width: 22
             access: rw
             reset: 0x00000000
-            description: 'Mesh Coefficient Write Data
-
-              UQ3.18. Legal gain range 0..4 inclusive, codes 0x000000..0x100000; unity is 0x040000. A code above 4.0
-              sets LSC_ERROR.COEF_RANGE and marks the load invalid; it is still counted. A write after LOAD_FULL is
-              discarded and sets LOAD_PROTOCOL. Scalar load order is R, Gr, Gb, B at each node, then X, then Y.'
+            description: Node gain UQ4.18 [21:0]; unity 0x40000, maximum 8x (0x200000), ISP-UPD-001.
       - name: LSC_LOAD_STATUS
         offset: 0x00000418
         size: 32
@@ -1603,49 +2179,40 @@ peripherals:
         size: 32
         access: rw
         reset: 0x00000000
-        description: 'CCM: red offset, added after the matrix.'
+        description: Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007).
         fields:
           - name: OFFSET_R
             bit_offset: 0
             bit_width: 12
             access: rw
             reset: 0x00000000
-            description: 'Red Post-Matrix Offset
-
-              Signed two''s-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/512. Offsets use the
-              same fractional scale as the accumulator and are added before the final shift.'
+            description: Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007).
       - name: CCM_OFS_G
         offset: 0x0000102C
         size: 32
         access: rw
         reset: 0x00000000
-        description: 'CCM: green offset, added after the matrix.'
+        description: Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007).
         fields:
           - name: OFFSET_G
             bit_offset: 0
             bit_width: 12
             access: rw
             reset: 0x00000000
-            description: 'Green Post-Matrix Offset
-
-              Signed two''s-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/512. Offsets use the
-              same fractional scale as the accumulator and are added before the final shift.'
+            description: Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007).
       - name: CCM_OFS_B
         offset: 0x00001030
         size: 32
         access: rw
         reset: 0x00000000
-        description: 'CCM: blue offset, added after the matrix.'
+        description: Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007).
         fields:
           - name: OFFSET_B
             bit_offset: 0
             bit_width: 12
             access: rw
             reset: 0x00000000
-            description: 'Blue Post-Matrix Offset
-
-              Signed two''s-complement Q3.9, 12 bits. Unity is 0x200; range -4.0 through 4.0-1/512. Offsets use the
-              same fractional scale as the accumulator and are added before the final shift.'
+            description: Signed 12-bit offset in output pixel levels; code 1 adds one level (ISP-UPD-007).
       - name: CCM_STATUS
         offset: 0x00001034
         size: 32
@@ -4158,24 +4725,8 @@ peripherals:
             bit_width: 6
             access: w1c
             reset: 0x00000000
-            description: 'Sticky DMA Error Flags
-
-              W1C, hardware set wins over simultaneous clear. DMA-scope recovery, automatic or commanded, preserves
-              these bits; only W1C, common recovery and hard reset clear them.
-
-              Bit 0 ALIGN: illegal address/stride alignment or geometry, a base-address bit at or above the build
-              address width, or a plane whose last byte reaches 2^ADDR_W; checked at IDMA frame start and ODMA buffer
-              claim. The buffer is not used, its ownership bit clears and the rotation does not advance.
-
-              Bit 1 IDMA_UNDERRUN: enabled idle input DMA has no valid head buffer; stalls without dropping data.
-
-              Bit 2 ODMA_OVERFLOW: pixels await an output buffer; backpressure at a line boundary until one is free.
-
-              Bit 3 AXI_RD: terminal read response error; starts automatic DMA-scope recovery.
-
-              Bit 4 AXI_WR: terminal write response error; starts automatic DMA-scope recovery.
-
-              Bit 5 reserved, reads zero.'
+            description: ERR; documented width 6, implemented mask 0x1f.
+            mask: 0x0000001F
       - name: DMA_IRQ_EN
         offset: 0x0000300C
         size: 32
@@ -4248,10 +4799,8 @@ peripherals:
             bit_width: 8
             access: w1s
             reset: 0x00000000
-            description: "Input Buffer Valid Flags\nOne bit per input buffer; write 1 to hand a filled buffer to the\
-              \ engine.\n  7:4 unused -- the engine implements four buffers\nBits at or above the build buffer count\
-              \ read zero and ignore writes.\nHardware clears a bit when it has finished reading that buffer.\nbit\
-              \ 0 = BUFFER_0 (Address from IDMA_BUF_ADDR_L0/H0)\nbit 1 = BUFFER_1\nbit 2 = BUFFER_2\nbit 3 = BUFFER_3"
+            description: IDMA_BUF_VALID; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: IDMA_FRAME_COUNT
         offset: 0x00003028
         size: 32
@@ -4448,12 +4997,8 @@ peripherals:
             bit_width: 8
             access: w1s
             reset: 0x00000000
-            description: 'Output Buffer Free Flags
-
-              Bits 3:0 identify the four buffers; bits 7:4 are unused. Bits at or above the build buffer count read
-              zero and ignore writes. Write 1 to make a buffer available. Hardware clears the bit when the output
-              frame claims the buffer. Acknowledge DONE before rearming FREE. With no free buffer the pipeline stalls
-              and reports ODMA_OVERFLOW.'
+            description: ODMA_BUF_FREE; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: ODMA_BUF_DONE
         offset: 0x0000308C
         size: 32
@@ -4467,11 +5012,8 @@ peripherals:
             bit_width: 8
             access: w1c
             reset: 0x00000000
-            description: 'Output Buffer Done Flags
-
-              Bits 3:0 identify buffers; bits 7:4 unused. Hardware sets a bit on complete output-frame retirement.
-              Write 1 to acknowledge, then separately set FREE to permit reuse. A simultaneous completion wins over
-              clear.'
+            description: ODMA_BUF_DONE; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: ODMA_FRAME_COUNT
         offset: 0x00003090
         size: 32
@@ -5292,11 +5834,8 @@ peripherals:
             bit_width: 8
             access: w1s
             reset: 0x00000000
-            description: 'Output Buffer Free Flags
-
-              Bits 3:0 identify the four buffers; bits 7:4 are unused. Write 1 to release a buffer to hardware. Hardware
-              clears the bit at frame start. Acknowledge DONE before rearming FREE. With no free buffer the pipeline
-              stalls and reports ODMA_OVERFLOW.'
+            description: ODMA_BUF_FREE; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: CH1_ODMA_BUF_DONE
         offset: 0x0000328C
         size: 32
@@ -5310,11 +5849,8 @@ peripherals:
             bit_width: 8
             access: w1c
             reset: 0x00000000
-            description: 'Output Buffer Done Flags
-
-              Bits 3:0 identify buffers; bits 7:4 unused. Hardware sets a bit on complete output-frame retirement.
-              Write 1 to acknowledge, then separately set FREE to permit reuse. A simultaneous completion wins over
-              clear.'
+            description: ODMA_BUF_DONE; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: CH1_ODMA_FRAME_COUNT
         offset: 0x00003290
         size: 32
@@ -5972,11 +6508,8 @@ peripherals:
             bit_width: 8
             access: w1s
             reset: 0x00000000
-            description: 'Output Buffer Free Flags
-
-              Bits 3:0 identify the four buffers; bits 7:4 are unused. Write 1 to release a buffer to hardware. Hardware
-              clears the bit at frame start. Acknowledge DONE before rearming FREE. With no free buffer the pipeline
-              stalls and reports ODMA_OVERFLOW.'
+            description: ODMA_BUF_FREE; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: CH2_ODMA_BUF_DONE
         offset: 0x0000348C
         size: 32
@@ -5990,11 +6523,8 @@ peripherals:
             bit_width: 8
             access: w1c
             reset: 0x00000000
-            description: 'Output Buffer Done Flags
-
-              Bits 3:0 identify buffers; bits 7:4 unused. Hardware sets a bit on complete output-frame retirement.
-              Write 1 to acknowledge, then separately set FREE to permit reuse. A simultaneous completion wins over
-              clear.'
+            description: ODMA_BUF_DONE; documented width 8, implemented mask 0xf.
+            mask: 0x0000000F
       - name: CH2_ODMA_FRAME_COUNT
         offset: 0x00003490
         size: 32

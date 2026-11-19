@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "rgb domain/ccm/ftel_isp_ccm.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 void ccm_get_default_config(ccm_config_t *cfg)
 {
     if (!cfg) return;

@@ -17,6 +17,8 @@ class Field:
     description: str = ""
     access: Optional[str] = None
     reset: Optional[int] = None
+    # Implemented bits can be a subset of the documented field width (FX1 DMA).
+    mask: Optional[int] = None
 
 
 @dataclass

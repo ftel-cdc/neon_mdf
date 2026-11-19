@@ -3,7 +3,7 @@
  * Hiện thực và luồng xử lý.
  */
 #include "rgb domain/gamma/ftel_isp_gamma.h"
-#include "registers/regmap-v1.07.h"
+#include "registers/ftel_isp_regs.h"
 
 void gamma_get_default_config(gamma_config_t *cfg)
 {

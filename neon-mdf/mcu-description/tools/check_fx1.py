@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def check(args):
     description = ROOT / "mcu-description/devices/FX1.yaml"
-    header = args.regmap or ROOT / "components/ftel_isp/registers/regmap-v1.07.h"
+    header = args.regmap or ROOT / "arch/RISCV/Device/FTEL/FX1/Include/fx1_isp/fx1_isp_csr.h"
     device = load_device(description)
     registers = next(p for p in device.peripherals if p.name == "ISP").registers
     if args.isp_sdk is not None:
@@ -28,7 +28,8 @@ def check(args):
             raise ValueError("Phần ISP trong YAML lệch CSR/regmap; chạy lại import_fx1_isp.py")
     gen_fx1_registers.validate(device)
     include = ROOT / "arch/RISCV/Device/FTEL/FX1/Include"
-    source = ['#include "FX1.h"', '#include "regmap-v1.07.h"', '#include "dma/fx1_dma_regs.h"']
+    source = ['#include "FX1.h"', '#define ISP_BASE FX1_ISP_CSR_BASE',
+              '#include "ftel_isp_regs.h"', '#include "dma/fx1_dma_regs.h"']
     checks = 0
 
     def equal(left, right):
@@ -37,7 +38,12 @@ def check(args):
         source.append(f'_Static_assert(({left}) == ({right}), "{left}");')
 
     # Biên dịch đối chiếu từng macro độc lập; không chỉ so hai lần cùng bộ dữ liệu Python.
-    names = re.findall(r"^#define\s+(FX1_ISP_\w+)\s+", header.read_text(encoding="utf-8"), re.M)
+    definitions = subprocess.check_output(
+        [args.cc, "-E", "-dM", "-x", "c", "-I", str(include),
+         "-I", str(ROOT / "components/ftel_isp/registers"),
+         "-I", str(args.bsp_include), "-"],
+        input="\n".join(source) + "\n", text=True)
+    names = re.findall(r"^#define\s+(FX1_ISP_\w+)\s+", definitions, re.M)
     for name in names:
         if (name.endswith(("_OFFSET", "_RESET", "_ACCESS", "_MASK", "_SHIFT", "_WIDTH"))
                 and name != "FX1_ISP_MAX_REGISTER_OFFSET"):
@@ -65,7 +71,8 @@ def check(args):
         cfile = Path(temp) / "registers.c"
         cfile.write_text("\n".join(source) + "\n", encoding="utf-8")
         subprocess.run([args.cc, "-std=c11", "-Wall", "-Wextra", "-Werror", "-fsyntax-only",
-                        "-I", str(include), "-I", str(header.parent), "-I", str(args.bsp_include),
+                        "-I", str(include), "-I", str(ROOT / "components/ftel_isp/registers"),
+                        "-I", str(args.bsp_include),
                         str(cfile)], check=True)
     svd = ET.parse(ROOT / "mcu-description/generated/FX1.svd").getroot()
     peripherals = {p.findtext("name"): p for p in svd.findall("peripherals/peripheral")}

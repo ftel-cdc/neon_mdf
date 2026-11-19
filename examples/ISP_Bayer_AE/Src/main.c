@@ -3,7 +3,7 @@
 #include "mcu_device.h"
 #include "neon_freertos_fx1.h"
 #include "task.h"
-#include "registers/regmap-v1.07.h" /* Chỉ bài readback mới dùng regmap private. */
+#include "registers/ftel_isp_regs.h" /* Chỉ bài readback mới dùng regmap private. */
 
 static unsigned checks;
 
