@@ -1,15 +1,45 @@
-/examples/Blinky/build
+# Local editor settings and dependencies
 /.claude
 /.vscode
-/examples/FreeRTOS_Blinky/build
-/examples/OTA_Demo/build
-/examples/UART_ECHO_Polling/build/
-/examples/GPIO_Input_Output/build/
-/examples/FPGA_Terminal/build/
 /vscode-extension/node_modules
-/examples/Printf_Log/build/
+
+# Build output directories (at any depth)
+build/
+Build/
+cmake-build-*/
+CMakeFiles/
+
+# CMake/Ninja output outside a build directory
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+install_manifest.txt
+compile_commands.json
+build.ninja
+rules.ninja
+.ninja_log
+.ninja_deps
+
+# Compiler and linker output
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.elf
+*.elf.bin
+*.elf.map
+*.gcda
+*.gcno
+*.gcov
+a.out
+
+# Runtime/build logs
+logs/
+log/
+*.log
+*.log.[0-9]*
 
 # Python caches
 __pycache__/
-
-/examples/FX1_*/build/
+*.py[cod]

@@ -1,6 +1,0 @@
-ELF: /tmp/neon-fx1-freertos-import-20261110/verification/build/image-freertos/fx1_isp_image_freertos.elf
-RAW: /tmp/neon-fx1-freertos-import-20261110/D65_raw_2688x1520_5376.raw
-Result: /tmp/neon-fx1-freertos-import-20261110/runner/vp_neon/result
-PASS: 2 frame(s), 1920x1080
-PNG: /tmp/neon-fx1-freertos-import-20261110/runner/vp_neon/result/output.png
-NV12 SHA-256: 003445eab6533523f0742d2805d76d868fb56b545f26437193d1037ca78fe79f
