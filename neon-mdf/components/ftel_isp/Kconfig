@@ -1,3 +1,11 @@
 config NEON_MDF_FTEL_ISP
     bool "Build FX1 ISP v1.07 component (FX1 platform only)"
     default n
+
+config NEON_MDF_FTEL_ISP_3A
+    bool "Link binary 3A package for FX1"
+    depends on NEON_MDF_FTEL_ISP
+    default n
+    help
+        Build the OS-independent stats/controls adapter and link the FX1
+        libisp_3a.a distribution. The application provides both camera bins.

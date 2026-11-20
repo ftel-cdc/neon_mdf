@@ -41,3 +41,17 @@ target_sources(neon_mdf_ftel_isp PRIVATE
   platform/fx1/ftel_isp_platform.c)
 target_include_directories(neon_mdf_ftel_isp PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/pipeline")
+
+if(CONFIG_NEON_MDF_FTEL_ISP_3A)
+  set(_3a_root "${CMAKE_CURRENT_SOURCE_DIR}/algorithms/isp_3a")
+  set(_3a_archive "${_3a_root}/lib/fx1/libisp_3a.a")
+  if(NOT EXISTS "${_3a_archive}")
+    message(FATAL_ERROR "Missing FX1 3A distribution: ${_3a_archive}")
+  endif()
+  add_library(neon_mdf_isp_3a_binary STATIC IMPORTED GLOBAL)
+  set_target_properties(neon_mdf_isp_3a_binary PROPERTIES IMPORTED_LOCATION "${_3a_archive}")
+  target_sources(neon_mdf_ftel_isp PRIVATE pipeline/ftel_isp_auto.c stats/ftel_isp_stats_adapter.c)
+  target_include_directories(neon_mdf_ftel_isp PRIVATE "${_3a_root}/include")
+  target_link_libraries(neon_mdf_ftel_isp PRIVATE neon_mdf_isp_3a_binary ${NEON_MDF_DEVICE_TARGET} gcc)
+  target_compile_definitions(neon_mdf_ftel_isp PUBLIC NEON_MDF_HAS_ISP_3A=1)
+endif()

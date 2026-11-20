@@ -24,6 +24,7 @@ rules.ninja
 *.o
 *.obj
 *.a
+!/neon-mdf/components/ftel_isp/algorithms/isp_3a/lib/fx1/libisp_3a.a
 *.so
 *.so.*
 *.elf

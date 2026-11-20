@@ -3,6 +3,11 @@
 App: `examples/FX1_ISP_Image`. Dùng thư viện Neon và tuning riêng tại
 `profile/profile.csrw`, không dùng profile của VP.
 
+Example hiện bật binary 3A trong `sdkconfig`. Xem
+[tích hợp 3A](../examples/FX1_ISP_Image/README.md#tích-hợp-binary-3a) để biết vị
+trí `.a`/hai `.bin`, chế độ replay, AWB held và lựa chọn thử unscreened AWB.
+Pipeline vẫn dùng `.csrw`; startup WB lấy từ tuning binary khi 3A được bật.
+
 ## 1. Chuẩn bị
 
 Thực hiện [bước chuẩn bị terminal](FX1_FREERTOS.md#1-chuẩn-bị-terminal) từ
