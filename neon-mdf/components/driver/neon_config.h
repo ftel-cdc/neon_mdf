@@ -17,7 +17,7 @@
 #endif
 
 #ifndef NEON_GPIO_MODULE_ENABLED
-#if 1
+#if !defined(FX1)
 #define NEON_GPIO_MODULE_ENABLED 1
 #else
 #define NEON_GPIO_MODULE_ENABLED 0
@@ -25,7 +25,7 @@
 #endif
 
 #ifndef NEON_FLASH_MODULE_ENABLED
-#if 1
+#if !defined(FX1)
 #define NEON_FLASH_MODULE_ENABLED 1
 #else
 #define NEON_FLASH_MODULE_ENABLED 0
@@ -157,6 +157,14 @@
 #define NEON_WDT_MODULE_ENABLED 1
 #else
 #define NEON_WDT_MODULE_ENABLED 0
+#endif
+#endif
+
+#ifndef NEON_ETH_MODULE_ENABLED
+#if defined(FX1) && (!NEON_CONFIG_HAS_SDKCONFIG || defined(CONFIG_NEON_MDF_DRIVER_ETH))
+#define NEON_ETH_MODULE_ENABLED 1
+#else
+#define NEON_ETH_MODULE_ENABLED 0
 #endif
 #endif
 

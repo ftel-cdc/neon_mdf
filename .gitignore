@@ -2,6 +2,8 @@
 /.claude
 /.vscode
 /vscode-extension/node_modules
+/vscode-extension/dist/
+/vscode-extension/*.vsix
 
 # Build output directories (at any depth)
 build/

@@ -15,6 +15,9 @@ CMSIS) use the same code generation pipeline.
 
 **Set up the environment first:** see `SETUP.md` for Windows, macOS and Linux.
 
+FX1 Ethernet: [driver API and ownership](neon-mdf/components/driver/eth/README.md) and
+[loopback example](examples/ETH_Loopback/README.md), validated on the VP dev Ethernet model.
+
 Coding conventions: [NEON Coding Convention V1.3](guide/NEON_Coding_Convention_V1.3.md)
 and [how they apply to Neon MDF](guide/NEON_MDF_Source_Format_Guideline.md).
 

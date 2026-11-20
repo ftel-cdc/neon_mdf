@@ -15489,13 +15489,2592 @@ peripherals:
     description: 'RESERVED: VP hiện tại chưa mô phỏng; truy cập gây fault.'
     registers: []
   - name: ETH
-    base: 0x11030000
-    description: 'RESERVED: VP hiện tại chưa mô phỏng; truy cập gây fault.'
-    registers: []
-  - name: MIPI
+    base: 285409280
+    description: FTEL Ethernet MAC MAS v1.0.7; VP dev 3b36805 drivers/eth/eth_regs.h. Aligned 32-bit CSR only.
+    registers:
+    - name: ID
+      offset: 0
+      size: 32
+      access: unknown
+      reset: 1163151361
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: VER_MINOR
+        bit_offset: 0
+        bit_width: 4
+      - name: VER_MAJOR
+        bit_offset: 4
+        bit_width: 4
+      - name: ID
+        bit_offset: 8
+        bit_width: 24
+    - name: CTRL
+      offset: 4
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: RST_N
+        bit_offset: 0
+        bit_width: 1
+      - name: RXCSUM_RST_N
+        bit_offset: 1
+        bit_width: 1
+      - name: TXCSUM_RST_N
+        bit_offset: 2
+        bit_width: 1
+      - name: MDIO_RST_N
+        bit_offset: 3
+        bit_width: 1
+      - name: DMA_RST_N
+        bit_offset: 4
+        bit_width: 1
+      - name: TXFIFO_WR_RST_N
+        bit_offset: 5
+        bit_width: 1
+      - name: RXFIFO_RD_RST_N
+        bit_offset: 6
+        bit_width: 1
+      - name: RX_RMII_RST_N
+        bit_offset: 7
+        bit_width: 1
+      - name: TX_RMII_RST_N
+        bit_offset: 8
+        bit_width: 1
+      - name: RXMAC_RST_N
+        bit_offset: 9
+        bit_width: 1
+      - name: TXMAC_RST_N
+        bit_offset: 10
+        bit_width: 1
+      - name: RMON_RST_N
+        bit_offset: 11
+        bit_width: 1
+      - name: TXFIFO_RD_RST_N
+        bit_offset: 12
+        bit_width: 1
+      - name: RXFIFO_WR_RST_N
+        bit_offset: 13
+        bit_width: 1
+    - name: STATUS
+      offset: 8
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: TX_BUSY
+        bit_offset: 0
+        bit_width: 1
+      - name: RX_BUSY
+        bit_offset: 1
+        bit_width: 1
+      - name: DMA_TX_BUSY
+        bit_offset: 2
+        bit_width: 1
+      - name: DMA_RX_BUSY
+        bit_offset: 3
+        bit_width: 1
+      - name: AXI_ERR_STICKY
+        bit_offset: 4
+        bit_width: 1
+    - name: CAP
+      offset: 12
+      size: 32
+      access: unknown
+      reset: 1
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: FULL_DUPLEX
+        bit_offset: 0
+        bit_width: 1
+      - name: JUMBO_EN
+        bit_offset: 1
+        bit_width: 1
+      - name: AXI_DATA_WIDTH
+        bit_offset: 8
+        bit_width: 2
+    - name: INT_RAW
+      offset: 16
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: TX_DONE
+        bit_offset: 0
+        bit_width: 1
+      - name: RX_DONE
+        bit_offset: 1
+        bit_width: 1
+      - name: TX_ERR
+        bit_offset: 2
+        bit_width: 1
+      - name: RX_ERR
+        bit_offset: 3
+        bit_width: 1
+      - name: TX_BUF_UNAVAIL
+        bit_offset: 4
+        bit_width: 1
+      - name: RX_BUF_UNAVAIL
+        bit_offset: 5
+        bit_width: 1
+      - name: MDIO_DONE
+        bit_offset: 7
+        bit_width: 1
+    - name: INT_EN
+      offset: 20
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: EN
+        bit_offset: 0
+        bit_width: 6
+      - name: EN_MDIO_DONE
+        bit_offset: 7
+        bit_width: 1
+    - name: INT_INJ
+      offset: 24
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: INJ
+        bit_offset: 0
+        bit_width: 6
+      - name: INJ_MDIO_DONE
+        bit_offset: 7
+        bit_width: 1
+    - name: INT_STATUS
+      offset: 28
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: STATUS
+        bit_offset: 0
+        bit_width: 6
+      - name: STATUS_MDIO_DONE
+        bit_offset: 7
+        bit_width: 1
+    - name: FIFO_STAT
+      offset: 32
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: RXFIFO_OVF
+        bit_offset: 0
+        bit_width: 1
+      - name: RXFIFO_UDF
+        bit_offset: 1
+        bit_width: 1
+      - name: TXFIFO_OVF
+        bit_offset: 2
+        bit_width: 1
+      - name: TXFIFO_UDF
+        bit_offset: 3
+        bit_width: 1
+      - name: TXMETA_OVF
+        bit_offset: 4
+        bit_width: 1
+      - name: TXMETA_UDF
+        bit_offset: 5
+        bit_width: 1
+    - name: RMII_CFG
+      offset: 4096
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: SPEED
+        bit_offset: 0
+        bit_width: 1
+      - name: TXD_BIT_ORDER
+        bit_offset: 1
+        bit_width: 1
+      - name: RXD_BIT_ORDER
+        bit_offset: 2
+        bit_width: 1
+    - name: RX_MAC_CFG
+      offset: 8192
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: RX_EN
+        bit_offset: 0
+        bit_width: 1
+    - name: RX_MAX_FRAME
+      offset: 8196
+      size: 32
+      access: unknown
+      reset: 1518
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: MAX_FRAME
+        bit_offset: 0
+        bit_width: 16
+    - name: RX_MIN_FRAME
+      offset: 8200
+      size: 32
+      access: unknown
+      reset: 64
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: MIN_FRAME
+        bit_offset: 0
+        bit_width: 16
+    - name: FILT_CTRL
+      offset: 8208
+      size: 32
+      access: unknown
+      reset: 1
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: BCAST_ACCEPT
+        bit_offset: 0
+        bit_width: 1
+      - name: PASS_ALL_MCAST
+        bit_offset: 1
+        bit_width: 1
+      - name: HASH_EN
+        bit_offset: 2
+        bit_width: 1
+    - name: HASH_L
+      offset: 8212
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: HASH_L
+        bit_offset: 0
+        bit_width: 32
+    - name: HASH_H
+      offset: 8216
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: HASH_H
+        bit_offset: 0
+        bit_width: 32
+    - name: UC_ADDR_L0
+      offset: 8224
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_L
+        bit_offset: 0
+        bit_width: 32
+    - name: UC_ADDR_H0
+      offset: 8228
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_H
+        bit_offset: 0
+        bit_width: 16
+    - name: UC_CTRL0
+      offset: 8232
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ENABLE
+        bit_offset: 0
+        bit_width: 1
+    - name: UC_ADDR_L1
+      offset: 8240
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_L
+        bit_offset: 0
+        bit_width: 32
+    - name: UC_ADDR_H1
+      offset: 8244
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_H
+        bit_offset: 0
+        bit_width: 16
+    - name: UC_CTRL1
+      offset: 8248
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ENABLE
+        bit_offset: 0
+        bit_width: 1
+    - name: UC_ADDR_L2
+      offset: 8256
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_L
+        bit_offset: 0
+        bit_width: 32
+    - name: UC_ADDR_H2
+      offset: 8260
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_H
+        bit_offset: 0
+        bit_width: 16
+    - name: UC_CTRL2
+      offset: 8264
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ENABLE
+        bit_offset: 0
+        bit_width: 1
+    - name: UC_ADDR_L3
+      offset: 8272
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_L
+        bit_offset: 0
+        bit_width: 32
+    - name: UC_ADDR_H3
+      offset: 8276
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ADDR_H
+        bit_offset: 0
+        bit_width: 16
+    - name: UC_CTRL3
+      offset: 8280
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ENABLE
+        bit_offset: 0
+        bit_width: 1
+    - name: TX_MAC_CFG
+      offset: 12288
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: TX_EN
+        bit_offset: 0
+        bit_width: 1
+    - name: IPG
+      offset: 12292
+      size: 32
+      access: unknown
+      reset: 12
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: IPG
+        bit_offset: 0
+        bit_width: 8
+    - name: TX_MAX_FRAME
+      offset: 12296
+      size: 32
+      access: unknown
+      reset: 1518
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: MAX_FRAME
+        bit_offset: 0
+        bit_width: 16
+    - name: TX_MIN_FRAME
+      offset: 12300
+      size: 32
+      access: unknown
+      reset: 64
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: MIN_FRAME
+        bit_offset: 0
+        bit_width: 16
+    - name: CSUM_RX_CFG
+      offset: 16384
+      size: 32
+      access: unknown
+      reset: 3
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: CSUM_RX_EN
+        bit_offset: 0
+        bit_width: 1
+      - name: CSUM_RX_L4_EN
+        bit_offset: 1
+        bit_width: 1
+    - name: CSUM_TX_CFG
+      offset: 20480
+      size: 32
+      access: unknown
+      reset: 3
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: CSUM_TX_EN
+        bit_offset: 0
+        bit_width: 1
+      - name: CSUM_TX_L4_EN
+        bit_offset: 1
+        bit_width: 1
+    - name: DMA_BUILDCFG
+      offset: 24576
+      size: 32
+      access: unknown
+      reset: 699147269
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: DATA_WIDTH_LOG2
+        bit_offset: 0
+        bit_width: 5
+      - name: ADDR_WIDTH
+        bit_offset: 5
+        bit_width: 6
+      - name: MAX_BURST_LOG2
+        bit_offset: 11
+        bit_width: 5
+      - name: TX_FIFO_DEPTH_LOG2
+        bit_offset: 16
+        bit_width: 5
+      - name: RX_FIFO_DEPTH_LOG2
+        bit_offset: 21
+        bit_width: 5
+      - name: POLL_CYCLES_LOG2
+        bit_offset: 26
+        bit_width: 6
+    - name: DMA_AXI_CFG
+      offset: 24580
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: AWCACHE
+        bit_offset: 0
+        bit_width: 4
+      - name: ARCACHE
+        bit_offset: 4
+        bit_width: 4
+    - name: DMA_TX_CTRL
+      offset: 24592
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: START
+        bit_offset: 0
+        bit_width: 1
+      - name: HALT_REQ
+        bit_offset: 1
+        bit_width: 1
+      - name: SRST
+        bit_offset: 2
+        bit_width: 1
+    - name: DMA_TX_STAT
+      offset: 24596
+      size: 32
+      access: unknown
+      reset: 4
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: RUNNING
+        bit_offset: 0
+        bit_width: 1
+      - name: HALTED
+        bit_offset: 1
+        bit_width: 1
+      - name: IDLE
+        bit_offset: 2
+        bit_width: 1
+      - name: SUSPENDED
+        bit_offset: 3
+        bit_width: 1
+      - name: ERR
+        bit_offset: 4
+        bit_width: 1
+      - name: DONE
+        bit_offset: 5
+        bit_width: 1
+    - name: DMA_TX_DESC_BASE
+      offset: 24600
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: DESC_BASE
+        bit_offset: 4
+        bit_width: 28
+    - name: DMA_TX_DESC_LEN
+      offset: 24604
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: DESC_LEN
+        bit_offset: 0
+        bit_width: 16
+    - name: DMA_TX_POLL
+      offset: 24608
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: POLL
+        bit_offset: 0
+        bit_width: 1
+    - name: DMA_TX_COAL
+      offset: 24612
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COAL_CNT
+        bit_offset: 0
+        bit_width: 8
+      - name: COAL_TIMER
+        bit_offset: 8
+        bit_width: 16
+    - name: DMA_TX_ERRINFO
+      offset: 24616
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ERR_CLASS
+        bit_offset: 0
+        bit_width: 4
+      - name: DECERR
+        bit_offset: 4
+        bit_width: 1
+    - name: DMA_TX_CUR_DESC
+      offset: 24620
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: CUR_DESC
+        bit_offset: 0
+        bit_width: 16
+    - name: DMA_RX_CTRL
+      offset: 26624
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: START
+        bit_offset: 0
+        bit_width: 1
+      - name: HALT_REQ
+        bit_offset: 1
+        bit_width: 1
+      - name: SRST
+        bit_offset: 2
+        bit_width: 1
+    - name: DMA_RX_STAT
+      offset: 26628
+      size: 32
+      access: unknown
+      reset: 4
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: RUNNING
+        bit_offset: 0
+        bit_width: 1
+      - name: HALTED
+        bit_offset: 1
+        bit_width: 1
+      - name: IDLE
+        bit_offset: 2
+        bit_width: 1
+      - name: SUSPENDED
+        bit_offset: 3
+        bit_width: 1
+      - name: ERR
+        bit_offset: 4
+        bit_width: 1
+      - name: DONE
+        bit_offset: 5
+        bit_width: 1
+    - name: DMA_RX_DESC_BASE
+      offset: 26632
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: DESC_BASE
+        bit_offset: 4
+        bit_width: 28
+    - name: DMA_RX_DESC_LEN
+      offset: 26636
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: DESC_LEN
+        bit_offset: 0
+        bit_width: 16
+    - name: DMA_RX_POLL
+      offset: 26640
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: POLL
+        bit_offset: 0
+        bit_width: 1
+    - name: DMA_RX_COAL
+      offset: 26644
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COAL_CNT
+        bit_offset: 0
+        bit_width: 8
+      - name: COAL_TIMER
+        bit_offset: 8
+        bit_width: 16
+    - name: DMA_RX_ERRINFO
+      offset: 26648
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: ERR_CLASS
+        bit_offset: 0
+        bit_width: 4
+      - name: DECERR
+        bit_offset: 4
+        bit_width: 1
+    - name: DMA_RX_CUR_DESC
+      offset: 26652
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: CUR_DESC
+        bit_offset: 0
+        bit_width: 16
+    - name: DMA_RX_BUF_SIZE
+      offset: 26656
+      size: 32
+      access: unknown
+      reset: 1514
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: BUF_SIZE
+        bit_offset: 0
+        bit_width: 16
+    - name: DMA_RX_DROP_CNT
+      offset: 26660
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_CTRL
+      offset: 28672
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: RMON_EN
+        bit_offset: 0
+        bit_width: 1
+      - name: READ_CLEAR_EN
+        bit_offset: 1
+        bit_width: 1
+      - name: CLEAR_ALL
+        bit_offset: 2
+        bit_width: 1
+      - name: FREEZE
+        bit_offset: 3
+        bit_width: 1
+    - name: RMON_OVF_STAT_TX
+      offset: 28676
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: OVF_TX
+        bit_offset: 0
+        bit_width: 13
+    - name: RMON_OVF_STAT_RX
+      offset: 28680
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: OVF_RX
+        bit_offset: 0
+        bit_width: 18
+    - name: RMON_TX_PKTS
+      offset: 28688
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_OCTETS
+      offset: 28692
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_BCAST
+      offset: 28696
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_MCAST
+      offset: 28700
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_UNDERSIZE
+      offset: 28704
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_OVERSIZE
+      offset: 28708
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_DROP
+      offset: 28712
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_PKTS_64
+      offset: 28716
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_PKTS_65_127
+      offset: 28720
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_PKTS_128_255
+      offset: 28724
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_PKTS_256_511
+      offset: 28728
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_PKTS_512_1023
+      offset: 28732
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_TX_PKTS_1024_1518
+      offset: 28736
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_DROP_EVENTS
+      offset: 30720
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_OCTETS
+      offset: 30724
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS
+      offset: 30728
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_BCAST_PKTS
+      offset: 30732
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_MCAST_PKTS
+      offset: 30736
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_CRC_ALIGN_ERR
+      offset: 30740
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_UNDERSIZE
+      offset: 30744
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_OVERSIZE
+      offset: 30748
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_FRAGMENTS
+      offset: 30752
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_JABBERS
+      offset: 30756
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_COLLISIONS
+      offset: 30760
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS_64
+      offset: 30764
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS_65_127
+      offset: 30768
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS_128_255
+      offset: 30772
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS_256_511
+      offset: 30776
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS_512_1023
+      offset: 30780
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_PKTS_1024_1518
+      offset: 30784
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: RMON_RX_FILTER_DROP
+      offset: 30788
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: COUNT
+        bit_offset: 0
+        bit_width: 32
+    - name: MDIO_CTRL
+      offset: 32768
+      size: 32
+      access: unknown
+      reset: 163840
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: START
+        bit_offset: 0
+        bit_width: 1
+      - name: OP
+        bit_offset: 1
+        bit_width: 1
+      - name: REGAD
+        bit_offset: 2
+        bit_width: 5
+      - name: PHYAD
+        bit_offset: 7
+        bit_width: 5
+      - name: CLK_DIV
+        bit_offset: 12
+        bit_width: 8
+      - name: PRE_SUPPRESS
+        bit_offset: 20
+        bit_width: 1
+    - name: MDIO_DATA
+      offset: 32772
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: DATA
+        bit_offset: 0
+        bit_width: 16
+    - name: MDIO_STAT
+      offset: 32776
+      size: 32
+      access: unknown
+      reset: 0
+      description: VP CSR workbook export; access semantics are enforced by the reference driver, not specified by
+        this header.
+      fields:
+      - name: BUSY
+        bit_offset: 0
+        bit_width: 1
+      - name: NO_RESPONSE
+        bit_offset: 1
+        bit_width: 1
+      - name: START_WHILE_BUSY
+        bit_offset: 2
+        bit_width: 1
+      - name: DONE
+        bit_offset: 3
+        bit_width: 1
+  - name: MIPI_CSI2
     base: 0x11040000
-    description: CSI-2 chỉ tồn tại khi VP bật --camera. Register chi tiết chưa nhập; xem include/fx1_csi2/fx1_csi2_regs.h.
-    registers: []
+    description: 'MIPI CSI-2 RX Controller (FTEL MAS v1.4 / HAS v1.2, CSR v1.4). Chỉ có khi VP bật --camera. Base là placeholder VP; 4 KiB aperture, giải mã 0x00-0xFF, 0x100-0xFFF trả DECERR. Lệch so với VP fx1_csi2_regs.h (workbook cũ): IP_VERSION, STREAM_CONFIG reset/bit2, BUFFER_STATUS bit19, DMA_ATTR reset, META_AREA_SIZE, TPG_CONTROL[5:4].'
+    registers:
+      - name: IP_VERSION
+        offset: 0x00000000
+        size: 32
+        access: ro
+        reset: 0x00010200
+        description: 'IP identifier and version: major [31:16], minor [15:8], patch [7:0].'
+        fields:
+          - name: IP_VERSION
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00010200
+            description: 0x0001_0200 = v1.2.0 (MAS v1.4 param IP_VERSION).
+      - name: CORE_CONFIG
+        offset: 0x00000004
+        size: 32
+        access: mixed
+        reset: 0x00000001
+        description: Core control.
+        fields:
+          - name: CORE_ENABLE
+            bit_offset: 0
+            bit_width: 1
+            access: rw
+            reset: 0x00000001
+            description: 'Global core enable. Low: Packet FSM idle, per-VC context cleared, open captures dropped.'
+          - name: SOFT_RESET
+            bit_offset: 1
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Level datapath reset, config preserved. Needs running rxbyteclkhs to reach Lane Mgmt.
+          - name: FULL_RESET
+            bit_offset: 2
+            bit_width: 1
+            access: wo
+            reset: 0x00000000
+            description: Self-clearing. Resets D-PHY + datapath + register file via PHY Reset Sequencer.
+      - name: PROTOCOL_CONFIG
+        offset: 0x00000008
+        size: 32
+        access: mixed
+        reset: 0x00000003
+        description: Protocol configuration.
+        fields:
+          - name: ACTIVE_LANES
+            bit_offset: 0
+            bit_width: 2
+            access: rw
+            reset: 0x00000003
+            description: 00=1 lane, 01=2 lanes, 11=4 lanes, 10 reserved. Adopted only in Lane Mgmt ST_IDLE.
+          - name: MAX_LANES
+            bit_offset: 8
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+            description: Build parameter MAX_LANES (reads parameter; counted as 0 in reset value).
+          - name: ACTIVE_LANES_APPLIED
+            bit_offset: 10
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+            description: Lane count in use inside the datapath (read-back).
+          - name: VC_EXPOSURE_MAP
+            bit_offset: 12
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: '0: VC0=Long, VC1=Short; 1: swapped. Applied to TID and lead channel.'
+      - name: PHY_CONFIG
+        offset: 0x0000000C
+        size: 32
+        access: mixed
+        reset: 0x00000078
+        description: D-PHY configuration.
+        fields:
+          - name: PHY_ENABLE
+            bit_offset: 0
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: D-PHY enable; when 0, cl_enable and all dl_enable outputs are deasserted.
+          - name: DPHY_RST_REQ
+            bit_offset: 1
+            bit_width: 1
+            access: wo
+            reset: 0x00000000
+            description: Self-clearing. Starts PHY Reset Sequencer (phy_core_rst >= 40 core_clk).
+          - name: CL_ENABLE
+            bit_offset: 2
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Clock-lane enable.
+          - name: DL_ENABLE
+            bit_offset: 3
+            bit_width: 4
+            access: rw
+            reset: 0x0000000F
+            description: Data-lane enables, bit 3 = lane 0 .. bit 6 = lane 3.
+          - name: FORCERXMODE
+            bit_offset: 7
+            bit_width: 4
+            access: rw
+            reset: 0x00000000
+            description: Per-lane force-receive-mode, debug/bring-up only.
+      - name: METADATA_DT_CONFIG
+        offset: 0x00000010
+        size: 32
+        access: rw
+        reset: 0x00000012
+        description: Metadata Data Type configuration.
+        fields:
+          - name: METADATA_DT
+            bit_offset: 0
+            bit_width: 6
+            access: rw
+            reset: 0x00000012
+            description: Data Type routed to embedded-data path. Must not be 0x10/0x11/0x2B/0x2C.
+          - name: METADATA_CAPTURE_EN
+            bit_offset: 8
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Enable embedded-data routing/capture.
+          - name: FNUM_CHECK_EN
+            bit_offset: 9
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Enable frame-number sequence check.
+          - name: EMB_EXTRACT_EN
+            bit_offset: 10
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Enable embedded-data field extractor.
+      - name: STREAM_CONFIG
+        offset: 0x00000014
+        size: 32
+        access: rw
+        reset: 0x00000001
+        description: Stream output configuration.
+        fields:
+          - name: AXIS_ENABLE
+            bit_offset: 0
+            bit_width: 1
+            access: rw
+            reset: 0x00000001
+            description: Enable AXI4-Stream path towards the ISP.
+          - name: STREAM_FORMAT
+            bit_offset: 1
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: 0 = packed RAW10/RAW12 (bypass), 1 = RAW16. Change only while AXIS_ENABLE = 0.
+          - name: STREAM_FOLLOW_DMA_DROP
+            bit_offset: 2
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: '1: a capture dropped by DMA alone is also skipped on the stream path.'
+      - name: EXPECTED_RESOLUTION
+        offset: 0x00000018
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Expected resolution, reference of the resolution check.
+        fields:
+          - name: EXPECTED_WIDTH
+            bit_offset: 0
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+            description: Expected active width (pixels).
+          - name: EXPECTED_HEIGHT
+            bit_offset: 16
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+            description: Expected active height (lines).
+      - name: CORE_STATUS
+        offset: 0x00000020
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Core status.
+        fields:
+          - name: RESET_IN_PROGRESS
+            bit_offset: 0
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: PHY Reset Sequencer running or SOFT_RESET set.
+          - name: LINE_BUFFER_FULL
+            bit_offset: 1
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Line Buffer fill >= FULL_WATERMARK (raw level).
+          - name: SP_FIFO_NOT_EMPTY
+            bit_offset: 2
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Generic Short Packet FIFO not empty.
+          - name: SP_FIFO_FULL
+            bit_offset: 3
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Generic Short Packet FIFO full.
+          - name: NULL_BLANK_SEEN
+            bit_offset: 4
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: 'Sticky: Null/Blanking long packet dropped.'
+          - name: ACTIVE_SRC
+            bit_offset: 5
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: 0 = sensor path, 1 = TPG.
+          - name: SRC_SWITCH_PENDING
+            bit_offset: 6
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Source switch in progress.
+          - name: DT_CONFLICT
+            bit_offset: 7
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: 'Sticky: METADATA_DT programmed to a fixed-meaning Data Type.'
+          - name: VC_UNSUPPORTED_SEEN
+            bit_offset: 12
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: 'Sticky: packet on unsupported Virtual Channel dropped.'
+      - name: PHY_STATUS
+        offset: 0x00000024
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: D-PHY clock lane status.
+        fields:
+          - name: CL_STOPSTATE
+            bit_offset: 0
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Clock lane in Stop State.
+          - name: CL_ULPS
+            bit_offset: 1
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Clock lane in ULPS (inverse of cl_ulpsactivenot).
+          - name: CL_RXCLKACTIVEHS
+            bit_offset: 2
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: HS clock active (rxbyteclkhs running).
+          - name: CL_ULPSCLKNOT
+            bit_offset: 3
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Clock lane ULPS line indication (reads 1 in ULPS).
+          - name: INIT_DONE
+            bit_offset: 4
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: D-PHY initialisation done (observability only).
+      - name: LANE_STATUS
+        offset: 0x00000028
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: 'Per-lane status, lane x at bits [8x+3:8x]. SOT errors sticky, cleared by SOFT_RESET.'
+        fields:
+          - name: LANE0_STOPSTATE
+            bit_offset: 0
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 0 in Stop State.
+          - name: LANE0_SOT_ERROR
+            bit_offset: 1
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 0 errsoths seen (sticky).
+          - name: LANE0_SOT_SYNC_ERROR
+            bit_offset: 2
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 0 errsotsynchs seen (sticky).
+          - name: LANE0_SKEWCALHS
+            bit_offset: 3
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 0 receiving deskew calibration.
+          - name: LANE1_STOPSTATE
+            bit_offset: 8
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 1 in Stop State.
+          - name: LANE1_SOT_ERROR
+            bit_offset: 9
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 1 errsoths seen (sticky).
+          - name: LANE1_SOT_SYNC_ERROR
+            bit_offset: 10
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 1 errsotsynchs seen (sticky).
+          - name: LANE1_SKEWCALHS
+            bit_offset: 11
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 1 receiving deskew calibration.
+          - name: LANE2_STOPSTATE
+            bit_offset: 16
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 2 in Stop State.
+          - name: LANE2_SOT_ERROR
+            bit_offset: 17
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 2 errsoths seen (sticky).
+          - name: LANE2_SOT_SYNC_ERROR
+            bit_offset: 18
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 2 errsotsynchs seen (sticky).
+          - name: LANE2_SKEWCALHS
+            bit_offset: 19
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 2 receiving deskew calibration.
+          - name: LANE3_STOPSTATE
+            bit_offset: 24
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 3 in Stop State.
+          - name: LANE3_SOT_ERROR
+            bit_offset: 25
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 3 errsoths seen (sticky).
+          - name: LANE3_SOT_SYNC_ERROR
+            bit_offset: 26
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 3 errsotsynchs seen (sticky).
+          - name: LANE3_SKEWCALHS
+            bit_offset: 27
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Lane 3 receiving deskew calibration.
+      - name: PACKET_COUNT
+        offset: 0x0000002C
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Long packets whose header passed ECC; wraps at 2^32.
+        fields:
+          - name: PACKET_COUNT
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: FRAME_COUNT
+        offset: 0x00000030
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Captures that have ended, dropped or not.
+        fields:
+          - name: FRAME_COUNT
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: BUFFER_STATUS
+        offset: 0x00000034
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Buffer status; overflow bits sticky, cleared by reset only.
+        fields:
+          - name: LINEBUF_FILL
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+            description: Line Buffer fill level (0..2048).
+          - name: LINEBUF_OVERFLOW
+            bit_offset: 16
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Line Buffer write refused.
+          - name: SP_FIFO_OVERFLOW
+            bit_offset: 17
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Generic short packet dropped on full FIFO.
+          - name: META_OVERFLOW
+            bit_offset: 18
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Embedded payload word lost on metadata path.
+          - name: DMA_OVERFLOW
+            bit_offset: 19
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: DMA RAW FIFO/line/region overflow (MAS v1.4).
+      - name: LANE_ALIGN_STATUS
+        offset: 0x00000038
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Lane alignment status.
+        fields:
+          - name: LM_FSM_STATE
+            bit_offset: 0
+            bit_width: 3
+            access: ro
+            reset: 0x00000000
+            description: 'Burst FSM: 0 IDLE, 1 ARMING, 2 ALIGNED, 3 DRAIN, 4 ABORT.'
+          - name: ABORT_SYNC_ERR
+            bit_offset: 3
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Last abort caused by errsotsynchs.
+          - name: ABORT_FIFO_FULL
+            bit_offset: 4
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Last abort caused by PHY Delay FIFO full while unarmed.
+          - name: ABORT_UNARMED
+            bit_offset: 5
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Last abort caused by burst closing while unarmed.
+          - name: DESKEW_BURST_SEEN
+            bit_offset: 6
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: 'Sticky: deskew burst classified and skipped.'
+          - name: ABORT_LANE_SYNC_SEEN
+            bit_offset: 8
+            bit_width: 4
+            access: ro
+            reset: 0x00000000
+            description: Per-lane sync_seen snapshot at abort; 0 = failing lane.
+      - name: GLOBAL_IRQ_ENABLE
+        offset: 0x00000040
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Global interrupt enable.
+        fields:
+          - name: GLOBAL_ENABLE
+            bit_offset: 0
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Master enable of csi2_irq.
+      - name: IRQ_STATUS
+        offset: 0x00000044
+        size: 32
+        access: w1c
+        reset: 0x00000000
+        description: Interrupt status, 24 sources, write 1 to clear; set wins over clear. Write response held until cleared bits read 0 (<= IRQ_CLR_TIMEOUT).
+        fields:
+          - name: FRAME_LEVEL_ERR_VC0
+            bit_offset: 0
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: VC0 frame had CRC/WC/lane-abort error (at Frame End).
+          - name: FRAME_SYNC_ERR_VC0
+            bit_offset: 1
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: VC0 frame identification failure.
+          - name: FRAME_LEVEL_ERR_VC1
+            bit_offset: 2
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: VC1 frame had CRC/WC/lane-abort error (at Frame End).
+          - name: FRAME_SYNC_ERR_VC1
+            bit_offset: 3
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: VC1 frame identification failure.
+          - name: CRC_ERROR
+            bit_offset: 4
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Payload CRC-16 mismatch.
+          - name: ECC_1BIT_ERROR
+            bit_offset: 5
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Header single-bit ECC error corrected.
+          - name: ECC_2BIT_ERROR
+            bit_offset: 6
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Uncorrectable header ECC error.
+          - name: UNSUPPORTED_DT
+            bit_offset: 7
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Long packet with unsupported Data Type.
+          - name: WC_CORRUPTION
+            bit_offset: 8
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Burst ended with non-zero remaining byte count.
+          - name: SOT_ERROR
+            bit_offset: 9
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: errsoths on any lane.
+          - name: SOT_SYNC_ERROR
+            bit_offset: 10
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: errsotsynchs on any lane.
+          - name: STOP_STATE
+            bit_offset: 11
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Clock lane entered Stop State.
+          - name: LINE_BUFFER_FULL
+            bit_offset: 12
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Line Buffer reached watermark (sensor path only).
+          - name: BUFFER_OVERFLOW
+            bit_offset: 13
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Line buffer/SP FIFO/metadata/DMA overflow; see BUFFER_STATUS.
+          - name: FRAME_DROPPED
+            bit_offset: 14
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Capture not delivered on every enabled path.
+          - name: FRAME_RECEIVED
+            bit_offset: 15
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Capture ended and delivered on stream path.
+          - name: BUF_DONE_OK
+            bit_offset: 16
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Ping-pong buffer released as SW_OWNED_VALID.
+          - name: BUF_DONE_ERR
+            bit_offset: 17
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Ping-pong buffer released as SW_OWNED_ERROR.
+          - name: AXI_WRITE_ERROR
+            bit_offset: 18
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: DMA write got SLVERR/DECERR.
+          - name: LANE_ALIGN_ABORT
+            bit_offset: 19
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Lane Management discarded a burst.
+          - name: RESOLUTION_MISMATCH
+            bit_offset: 20
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Frame geometry differs from EXPECTED_RESOLUTION.
+          - name: ERR_WC_ALIGN
+            bit_offset: 21
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Line ended mid pixel-packing unit.
+          - name: FMTBRIDGE_OVERFLOW
+            bit_offset: 22
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Format Bridge output beat lost.
+          - name: FRAME_NUM_SEQ_ERR
+            bit_offset: 23
+            bit_width: 1
+            access: w1c
+            reset: 0x00000000
+            description: Sensor frame number did not advance by one.
+      - name: IRQ_ENABLE
+        offset: 0x00000048
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Per-source interrupt mask, mirrors IRQ_STATUS.
+        fields:
+          - name: IRQ_ENABLE_MASK
+            bit_offset: 0
+            bit_width: 24
+            access: rw
+            reset: 0x00000000
+      - name: ECC_ERROR_COUNT
+        offset: 0x0000004C
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: ECC error counters, each saturating at 0xFFFF.
+        fields:
+          - name: ECC_1BIT_COUNT
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+          - name: ECC_2BIT_COUNT
+            bit_offset: 16
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+      - name: CRC_ERROR_COUNT
+        offset: 0x00000050
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Payload CRC-16 error count, saturating.
+        fields:
+          - name: CRC_ERROR_COUNT
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: FRAME_DROP_COUNT
+        offset: 0x00000054
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Dropped capture count, saturating.
+        fields:
+          - name: FRAME_DROP_COUNT
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: LANE_ABORT_COUNT
+        offset: 0x00000058
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Bursts discarded by Lane Management, saturating at 0xFFFF.
+        fields:
+          - name: LANE_ABORT_COUNT
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+      - name: VC0_IMAGE_INFO1
+        offset: 0x00000060
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Geometry of last published frame on VC0.
+        fields:
+          - name: BYTE_COUNT
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+            description: Payload bytes of one image long packet (last line).
+          - name: LINE_COUNT
+            bit_offset: 16
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+            description: Image lines of the frame.
+      - name: VC0_IMAGE_INFO2
+        offset: 0x00000064
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Data Type and resolution check of last published frame on VC0.
+        fields:
+          - name: DATA_TYPE
+            bit_offset: 0
+            bit_width: 6
+            access: ro
+            reset: 0x00000000
+          - name: WIDTH_MISMATCH
+            bit_offset: 6
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+          - name: HEIGHT_MISMATCH
+            bit_offset: 7
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+      - name: VC1_IMAGE_INFO1
+        offset: 0x00000068
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Geometry of last published frame on VC1.
+        fields:
+          - name: BYTE_COUNT
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+            description: Payload bytes of one image long packet (last line).
+          - name: LINE_COUNT
+            bit_offset: 16
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+            description: Image lines of the frame.
+      - name: VC1_IMAGE_INFO2
+        offset: 0x0000006C
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Data Type and resolution check of last published frame on VC1.
+        fields:
+          - name: DATA_TYPE
+            bit_offset: 0
+            bit_width: 6
+            access: ro
+            reset: 0x00000000
+          - name: WIDTH_MISMATCH
+            bit_offset: 6
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+          - name: HEIGHT_MISMATCH
+            bit_offset: 7
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+      - name: GENERIC_SHORT_PACKET
+        offset: 0x00000070
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Head of generic short-packet FIFO (DT 0x08..0x0F). Read pops the entry; empty FIFO reads 0.
+        fields:
+          - name: DATA_TYPE
+            bit_offset: 0
+            bit_width: 6
+            access: ro
+            reset: 0x00000000
+          - name: VIRTUAL_CHANNEL
+            bit_offset: 6
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+          - name: DATA
+            bit_offset: 8
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+      - name: EMBEDDED_DATA_INFO_VC0
+        offset: 0x00000074
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Embedded-data accounting, last published frame on VC0.
+        fields:
+          - name: EMBEDDED_WORD_COUNT_VC0
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+          - name: EMBEDDED_LINE_COUNT_VC0
+            bit_offset: 16
+            bit_width: 8
+            access: ro
+            reset: 0x00000000
+      - name: EMBEDDED_DATA_INFO_VC1
+        offset: 0x00000078
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Embedded-data accounting, last published frame on VC1.
+        fields:
+          - name: EMBEDDED_WORD_COUNT_VC1
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+          - name: EMBEDDED_LINE_COUNT_VC1
+            bit_offset: 16
+            bit_width: 8
+            access: ro
+            reset: 0x00000000
+      - name: METADATA_RECORD_ID
+        offset: 0x0000007C
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Software handle written into the metadata record; sampled when a capture opens.
+        fields:
+          - name: METADATA_RECORD_ID
+            bit_offset: 0
+            bit_width: 32
+            access: rw
+            reset: 0x00000000
+      - name: FRAME_ID
+        offset: 0x00000080
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: frame_id of the capture held in each ping-pong buffer.
+        fields:
+          - name: FRAME_ID_BUF0
+            bit_offset: 0
+            bit_width: 14
+            access: ro
+            reset: 0x00000000
+          - name: FRAME_ID_BUF1
+            bit_offset: 16
+            bit_width: 14
+            access: ro
+            reset: 0x00000000
+      - name: TIMESTAMP_LO
+        offset: 0x00000084
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: 'Timestamp [31:0] of last published capture (ns). Read snapshots HI into a shadow; read LO first.'
+        fields:
+          - name: TIMESTAMP_LO
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: TIMESTAMP_HI
+        offset: 0x00000088
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: 'Timestamp [63:32], from shadow taken at TIMESTAMP_LO read.'
+        fields:
+          - name: TIMESTAMP_HI
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: DMA_CONTROL
+        offset: 0x00000090
+        size: 32
+        access: rw
+        reset: 0x00000010
+        description: DMA control.
+        fields:
+          - name: DMA_ENABLE
+            bit_offset: 0
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Enable DMA path; clearing it aborts buffers in ST_WRITE.
+          - name: DMA_START
+            bit_offset: 1
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Allow buffer claims; clear first to stop gracefully.
+          - name: DMA_ABORT
+            bit_offset: 2
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: 'Level: no claim, every buffer in ST_WRITE aborted.'
+          - name: DMA_FORMAT
+            bit_offset: 3
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: 0 = packed RAW10/RAW12, 1 = RAW16. Change only while DMA_ENABLE=0 and idle.
+          - name: ERR_FRAME_POLICY
+            bit_offset: 4
+            bit_width: 1
+            access: rw
+            reset: 0x00000001
+            description: Sampled at claim. 0 = aborted buffer returns free; 1 = released SW_OWNED_ERROR.
+      - name: DMA_BUFFER0_ADDR
+        offset: 0x00000094
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: 'DDR base of ping-pong buffer 0; bits [2:0] ignored.'
+        fields:
+          - name: DMA_BUFFER0_ADDR
+            bit_offset: 0
+            bit_width: 32
+            access: rw
+            reset: 0x00000000
+      - name: DMA_BUFFER1_ADDR
+        offset: 0x00000098
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: 'DDR base of ping-pong buffer 1; bits [2:0] ignored.'
+        fields:
+          - name: DMA_BUFFER1_ADDR
+            bit_offset: 0
+            bit_width: 32
+            access: rw
+            reset: 0x00000000
+      - name: DMA_BUFFER_SIZE
+        offset: 0x0000009C
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Size of the RAW region of one channel; buffer = 2*(this + META_AREA_SIZE).
+        fields:
+          - name: DMA_BUFFER_SIZE
+            bit_offset: 0
+            bit_width: 32
+            access: rw
+            reset: 0x00000000
+      - name: DMA_ATTR
+        offset: 0x000000A0
+        size: 32
+        access: mixed
+        reset: 0x00000FF0
+        description: DMA AXI attributes; sampled at claim.
+        fields:
+          - name: AWQOS
+            bit_offset: 0
+            bit_width: 4
+            access: rw
+            reset: 0x00000000
+            description: m_axi4_awqos.
+          - name: MAX_BURST_LEN
+            bit_offset: 4
+            bit_width: 8
+            access: rw
+            reset: 0x000000FF
+            description: AWLEN encoding (beats-1), clamped to MAX_BURST_BEATS-1.
+          - name: AWPROT
+            bit_offset: 12
+            bit_width: 3
+            access: rw
+            reset: 0x00000000
+            description: m_axi4_awprot.
+          - name: MAX_OUTSTANDING
+            bit_offset: 16
+            bit_width: 7
+            access: ro
+            reset: 0x00000000
+            description: Read-back of build parameter MAX_OUTSTANDING (8).
+      - name: DMA_STATUS
+        offset: 0x000000A4
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: DMA status.
+        fields:
+          - name: DMA_BUSY
+            bit_offset: 0
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Any buffer in WRITE/DRAIN/ABORT.
+          - name: ACTIVE_BUFFER
+            bit_offset: 1
+            bit_width: 1
+            access: ro
+            reset: 0x00000000
+            description: Buffer most recently claimed.
+      - name: LINE_PITCH
+        offset: 0x000000A8
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Line pitch in DDR; stride = BYTES_PER_LINE + LINE_PADDING (multiple of 8).
+        fields:
+          - name: BYTES_PER_LINE
+            bit_offset: 0
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+          - name: LINE_PADDING
+            bit_offset: 16
+            bit_width: 8
+            access: rw
+            reset: 0x00000000
+      - name: BUFFER_OWNERSHIP
+        offset: 0x000000AC
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: 'Per-buffer ownership: 00 HW_OWNED, 01 SW_OWNED_VALID, 10 SW_OWNED_ERROR.'
+        fields:
+          - name: BUF0_STATE
+            bit_offset: 0
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+          - name: BUF1_STATE
+            bit_offset: 2
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+      - name: BUFFER_RELEASE
+        offset: 0x000000B0
+        size: 32
+        access: wo
+        reset: 0x00000000
+        description: Write 1 to return a software-owned buffer to the DMA.
+        fields:
+          - name: RELEASE_BUF0
+            bit_offset: 0
+            bit_width: 1
+            access: wo
+            reset: 0x00000000
+          - name: RELEASE_BUF1
+            bit_offset: 1
+            bit_width: 1
+            access: wo
+            reset: 0x00000000
+      - name: BUFFER_ERROR_INFO
+        offset: 0x000000B4
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Last line (from 0) written OKAY per buffer; 0xFFFF if none.
+        fields:
+          - name: BUF0_LAST_VALID_LINE
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+          - name: BUF1_LAST_VALID_LINE
+            bit_offset: 16
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+      - name: META_AREA_SIZE
+        offset: 0x000000B8
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Size of one channel's metadata area (>= 0x80 + max embedded payload). MAS v1.4.
+        fields:
+          - name: META_AREA_SIZE
+            bit_offset: 0
+            bit_width: 32
+            access: rw
+            reset: 0x00000000
+      - name: TPG_CONTROL
+        offset: 0x000000C0
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Test Pattern Generator control; fields except TPG_ENABLE apply from next frame.
+        fields:
+          - name: TPG_ENABLE
+            bit_offset: 0
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Start TPG and select it as video source (TPG Mux).
+          - name: PATTERN
+            bit_offset: 1
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: 0 = vertical bars, 1 = horizontal bars.
+          - name: TPG_DUAL_VC_EN
+            bit_offset: 2
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: Interleave VC0/VC1 lines.
+          - name: TPG_PIXEL_FORMAT
+            bit_offset: 3
+            bit_width: 1
+            access: rw
+            reset: 0x00000000
+            description: 0 = RAW12, 1 = RAW10.
+          - name: TPG_CFA_ORDER
+            bit_offset: 4
+            bit_width: 2
+            access: rw
+            reset: 0x00000000
+            description: 00 RGGB, 01 GRBG, 10 GBRG, 11 BGGR (MAS v1.4).
+      - name: ERROR_CAPTURE
+        offset: 0x000000C4
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: First protocol error of newest capture with an error; cleared by SOFT_RESET.
+        fields:
+          - name: FAULT_LINE_NUMBER
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+            description: Lines completed on that channel; 0xFFFF if channel unknown.
+          - name: FAULT_FRAME_ID
+            bit_offset: 16
+            bit_width: 14
+            access: ro
+            reset: 0x00000000
+            description: frame_id of the capture; 0 = nothing captured.
+          - name: FAULT_VC
+            bit_offset: 30
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+            description: 00 VC0, 01 VC1, 11 unknown.
+      - name: AXI_FAULT_TRACE
+        offset: 0x000000C8
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: First faulting AXI write since last soft reset.
+        fields:
+          - name: AWID
+            bit_offset: 0
+            bit_width: 8
+            access: ro
+            reset: 0x00000000
+          - name: RESP
+            bit_offset: 8
+            bit_width: 2
+            access: ro
+            reset: 0x00000000
+      - name: AXI_FAULT_ADDR
+        offset: 0x000000CC
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Address of first faulting AXI write since last soft reset.
+        fields:
+          - name: FAULT_AWADDR
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: AXI_ERROR_COUNT
+        offset: 0x000000D0
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: SLVERR/DECERR write-response counters, saturating.
+        fields:
+          - name: BRESP_SLVERR_COUNT
+            bit_offset: 0
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+          - name: BRESP_DECERR_COUNT
+            bit_offset: 16
+            bit_width: 16
+            access: ro
+            reset: 0x00000000
+      - name: TPG_RESOLUTION
+        offset: 0x000000D4
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: TPG active size; width truncated to multiple of 4, min 8x8.
+        fields:
+          - name: TPG_WIDTH
+            bit_offset: 0
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+          - name: TPG_HEIGHT
+            bit_offset: 16
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+            description: Lines per Virtual Channel.
+      - name: TPG_BLANKING
+        offset: 0x000000D8
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: TPG blanking.
+        fields:
+          - name: TPG_HBLANK
+            bit_offset: 0
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+            description: sys_clk cycles after each line.
+          - name: TPG_VBLANK
+            bit_offset: 16
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+            description: Blank line-times after each frame.
+      - name: EMB_EXTRACT_CFG0
+        offset: 0x000000E0
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Extraction slot 0 descriptor.
+        fields:
+          - name: LEN
+            bit_offset: 0
+            bit_width: 3
+            access: rw
+            reset: 0x00000000
+            description: Field length in bytes.
+          - name: BYTE_OFFSET
+            bit_offset: 8
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+          - name: LINE_IDX
+            bit_offset: 24
+            bit_width: 8
+            access: rw
+            reset: 0x00000000
+            description: Embedded line index.
+      - name: EMB_EXTRACT_CFG1
+        offset: 0x000000E4
+        size: 32
+        access: rw
+        reset: 0x00000000
+        description: Extraction slot 1 descriptor.
+        fields:
+          - name: LEN
+            bit_offset: 0
+            bit_width: 3
+            access: rw
+            reset: 0x00000000
+            description: Field length in bytes.
+          - name: BYTE_OFFSET
+            bit_offset: 8
+            bit_width: 16
+            access: rw
+            reset: 0x00000000
+          - name: LINE_IDX
+            bit_offset: 24
+            bit_width: 8
+            access: rw
+            reset: 0x00000000
+            description: Embedded line index.
+      - name: EMB_EXTRACT_VC0_VAL0
+        offset: 0x000000E8
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Field captured by slot 0 on VC0 in last published frame.
+        fields:
+          - name: VALUE
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: EMB_EXTRACT_VC0_VAL1
+        offset: 0x000000EC
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Field captured by slot 1 on VC0 in last published frame.
+        fields:
+          - name: VALUE
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: EMB_EXTRACT_VC1_VAL0
+        offset: 0x000000F0
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Field captured by slot 0 on VC1 in last published frame.
+        fields:
+          - name: VALUE
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
+      - name: EMB_EXTRACT_VC1_VAL1
+        offset: 0x000000F4
+        size: 32
+        access: ro
+        reset: 0x00000000
+        description: Field captured by slot 1 on VC1 in last published frame.
+        fields:
+          - name: VALUE
+            bit_offset: 0
+            bit_width: 32
+            access: ro
+            reset: 0x00000000
   - name: DDR3
     base: 0x12000000
     description: Đã mô phỏng, CSR 64 KiB. Register chi tiết nằm ở include/fx1_ddr3/fx1_ddr3_regs.h; chưa nhập vào
@@ -15527,7 +18106,7 @@ interrupts:
   description: Reserved; SIM_CTRL test
 - number: 7
   name: MIPI
-  description: CSI-2; không kích hoạt nếu VP không bật --camera
+  description: MIPI CSI-2 RX csi2_irq (level, IRQ_STATUS & IRQ_ENABLE & GLOBAL_ENABLE); không kích hoạt nếu VP không bật --camera
 - number: 8
   name: DDR
   description: DDR3 controller level

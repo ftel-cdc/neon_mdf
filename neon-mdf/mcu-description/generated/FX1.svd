@@ -19449,5 +19449,1793 @@ Update: PORT. MAS v1.07: tuning-lsc. [access=rw]</description>
         </register>
       </registers>
     </peripheral>
+    <peripheral>
+      <name>ETH</name>
+      <description>FTEL Ethernet MAC MAS v1.0.7; VP dev 3b36805 drivers/eth/eth_regs.h. Aligned 32-bit CSR only.</description>
+      <baseAddress>0x11030000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x800c</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <interrupt>
+        <name>ETH</name>
+        <value>6</value>
+      </interrupt>
+      <registers />
+    </peripheral>
+    <peripheral>
+      <name>MIPI_CSI2</name>
+      <description>MIPI CSI-2 RX Controller (FTEL MAS v1.4 / HAS v1.2, CSR v1.4). Chỉ có khi VP bật --camera. Base là placeholder VP; 4 KiB aperture, giải mã 0x00-0xFF, 0x100-0xFFF trả DECERR. Lệch so với VP fx1_csi2_regs.h (workbook cũ): IP_VERSION, STREAM_CONFIG reset/bit2, BUFFER_STATUS bit19, DMA_ATTR reset, META_AREA_SIZE, TPG_CONTROL[5:4].</description>
+      <baseAddress>0x11040000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0xf8</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>IP_VERSION</name>
+          <description>IP identifier and version: major [31:16], minor [15:8], patch [7:0]. [access=ro]</description>
+          <addressOffset>0x0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x10200</resetValue>
+          <fields>
+            <field>
+              <name>IP_VERSION</name>
+              <description>0x0001_0200 = v1.2.0 (MAS v1.4 param IP_VERSION). [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>CORE_CONFIG</name>
+          <description>Core control. [access=mixed]</description>
+          <addressOffset>0x4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x1</resetValue>
+          <fields>
+            <field>
+              <name>CORE_ENABLE</name>
+              <description>Global core enable. Low: Packet FSM idle, per-VC context cleared, open captures dropped. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>SOFT_RESET</name>
+              <description>Level datapath reset, config preserved. Needs running rxbyteclkhs to reach Lane Mgmt. [access=rw]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>FULL_RESET</name>
+              <description>Self-clearing. Resets D-PHY + datapath + register file via PHY Reset Sequencer. [access=wo]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>write-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>PROTOCOL_CONFIG</name>
+          <description>Protocol configuration. [access=mixed]</description>
+          <addressOffset>0x8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x3</resetValue>
+          <fields>
+            <field>
+              <name>ACTIVE_LANES</name>
+              <description>00=1 lane, 01=2 lanes, 11=4 lanes, 10 reserved. Adopted only in Lane Mgmt ST_IDLE. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>MAX_LANES</name>
+              <description>Build parameter MAX_LANES (reads parameter; counted as 0 in reset value). [access=ro]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ACTIVE_LANES_APPLIED</name>
+              <description>Lane count in use inside the datapath (read-back). [access=ro]</description>
+              <bitOffset>10</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>VC_EXPOSURE_MAP</name>
+              <description>0: VC0=Long, VC1=Short; 1: swapped. Applied to TID and lead channel. [access=rw]</description>
+              <bitOffset>12</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>PHY_CONFIG</name>
+          <description>D-PHY configuration. [access=mixed]</description>
+          <addressOffset>0xc</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x78</resetValue>
+          <fields>
+            <field>
+              <name>PHY_ENABLE</name>
+              <description>D-PHY enable; when 0, cl_enable and all dl_enable outputs are deasserted. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>DPHY_RST_REQ</name>
+              <description>Self-clearing. Starts PHY Reset Sequencer (phy_core_rst &gt;= 40 core_clk). [access=wo]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>write-only</access>
+            </field>
+            <field>
+              <name>CL_ENABLE</name>
+              <description>Clock-lane enable. [access=rw]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>DL_ENABLE</name>
+              <description>Data-lane enables, bit 3 = lane 0 .. bit 6 = lane 3. [access=rw]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>4</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>FORCERXMODE</name>
+              <description>Per-lane force-receive-mode, debug/bring-up only. [access=rw]</description>
+              <bitOffset>7</bitOffset>
+              <bitWidth>4</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>METADATA_DT_CONFIG</name>
+          <description>Metadata Data Type configuration. [access=rw]</description>
+          <addressOffset>0x10</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x12</resetValue>
+          <fields>
+            <field>
+              <name>METADATA_DT</name>
+              <description>Data Type routed to embedded-data path. Must not be 0x10/0x11/0x2B/0x2C. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>6</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>METADATA_CAPTURE_EN</name>
+              <description>Enable embedded-data routing/capture. [access=rw]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>FNUM_CHECK_EN</name>
+              <description>Enable frame-number sequence check. [access=rw]</description>
+              <bitOffset>9</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>EMB_EXTRACT_EN</name>
+              <description>Enable embedded-data field extractor. [access=rw]</description>
+              <bitOffset>10</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>STREAM_CONFIG</name>
+          <description>Stream output configuration. [access=rw]</description>
+          <addressOffset>0x14</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x1</resetValue>
+          <fields>
+            <field>
+              <name>AXIS_ENABLE</name>
+              <description>Enable AXI4-Stream path towards the ISP. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>STREAM_FORMAT</name>
+              <description>0 = packed RAW10/RAW12 (bypass), 1 = RAW16. Change only while AXIS_ENABLE = 0. [access=rw]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>STREAM_FOLLOW_DMA_DROP</name>
+              <description>1: a capture dropped by DMA alone is also skipped on the stream path. [access=rw]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EXPECTED_RESOLUTION</name>
+          <description>Expected resolution, reference of the resolution check. [access=rw]</description>
+          <addressOffset>0x18</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>EXPECTED_WIDTH</name>
+              <description>Expected active width (pixels). [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>EXPECTED_HEIGHT</name>
+              <description>Expected active height (lines). [access=rw]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>CORE_STATUS</name>
+          <description>Core status. [access=ro]</description>
+          <addressOffset>0x20</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>RESET_IN_PROGRESS</name>
+              <description>PHY Reset Sequencer running or SOFT_RESET set. [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LINE_BUFFER_FULL</name>
+              <description>Line Buffer fill &gt;= FULL_WATERMARK (raw level). [access=ro]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>SP_FIFO_NOT_EMPTY</name>
+              <description>Generic Short Packet FIFO not empty. [access=ro]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>SP_FIFO_FULL</name>
+              <description>Generic Short Packet FIFO full. [access=ro]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>NULL_BLANK_SEEN</name>
+              <description>Sticky: Null/Blanking long packet dropped. [access=ro]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ACTIVE_SRC</name>
+              <description>0 = sensor path, 1 = TPG. [access=ro]</description>
+              <bitOffset>5</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>SRC_SWITCH_PENDING</name>
+              <description>Source switch in progress. [access=ro]</description>
+              <bitOffset>6</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>DT_CONFLICT</name>
+              <description>Sticky: METADATA_DT programmed to a fixed-meaning Data Type. [access=ro]</description>
+              <bitOffset>7</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>VC_UNSUPPORTED_SEEN</name>
+              <description>Sticky: packet on unsupported Virtual Channel dropped. [access=ro]</description>
+              <bitOffset>12</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>PHY_STATUS</name>
+          <description>D-PHY clock lane status. [access=ro]</description>
+          <addressOffset>0x24</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>CL_STOPSTATE</name>
+              <description>Clock lane in Stop State. [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>CL_ULPS</name>
+              <description>Clock lane in ULPS (inverse of cl_ulpsactivenot). [access=ro]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>CL_RXCLKACTIVEHS</name>
+              <description>HS clock active (rxbyteclkhs running). [access=ro]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>CL_ULPSCLKNOT</name>
+              <description>Clock lane ULPS line indication (reads 1 in ULPS). [access=ro]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>INIT_DONE</name>
+              <description>D-PHY initialisation done (observability only). [access=ro]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>LANE_STATUS</name>
+          <description>Per-lane status, lane x at bits [8x+3:8x]. SOT errors sticky, cleared by SOFT_RESET. [access=ro]</description>
+          <addressOffset>0x28</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>LANE0_STOPSTATE</name>
+              <description>Lane 0 in Stop State. [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE0_SOT_ERROR</name>
+              <description>Lane 0 errsoths seen (sticky). [access=ro]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE0_SOT_SYNC_ERROR</name>
+              <description>Lane 0 errsotsynchs seen (sticky). [access=ro]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE0_SKEWCALHS</name>
+              <description>Lane 0 receiving deskew calibration. [access=ro]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE1_STOPSTATE</name>
+              <description>Lane 1 in Stop State. [access=ro]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE1_SOT_ERROR</name>
+              <description>Lane 1 errsoths seen (sticky). [access=ro]</description>
+              <bitOffset>9</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE1_SOT_SYNC_ERROR</name>
+              <description>Lane 1 errsotsynchs seen (sticky). [access=ro]</description>
+              <bitOffset>10</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE1_SKEWCALHS</name>
+              <description>Lane 1 receiving deskew calibration. [access=ro]</description>
+              <bitOffset>11</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE2_STOPSTATE</name>
+              <description>Lane 2 in Stop State. [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE2_SOT_ERROR</name>
+              <description>Lane 2 errsoths seen (sticky). [access=ro]</description>
+              <bitOffset>17</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE2_SOT_SYNC_ERROR</name>
+              <description>Lane 2 errsotsynchs seen (sticky). [access=ro]</description>
+              <bitOffset>18</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE2_SKEWCALHS</name>
+              <description>Lane 2 receiving deskew calibration. [access=ro]</description>
+              <bitOffset>19</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE3_STOPSTATE</name>
+              <description>Lane 3 in Stop State. [access=ro]</description>
+              <bitOffset>24</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE3_SOT_ERROR</name>
+              <description>Lane 3 errsoths seen (sticky). [access=ro]</description>
+              <bitOffset>25</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE3_SOT_SYNC_ERROR</name>
+              <description>Lane 3 errsotsynchs seen (sticky). [access=ro]</description>
+              <bitOffset>26</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LANE3_SKEWCALHS</name>
+              <description>Lane 3 receiving deskew calibration. [access=ro]</description>
+              <bitOffset>27</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>PACKET_COUNT</name>
+          <description>Long packets whose header passed ECC; wraps at 2^32. [access=ro]</description>
+          <addressOffset>0x2c</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>PACKET_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FRAME_COUNT</name>
+          <description>Captures that have ended, dropped or not. [access=ro]</description>
+          <addressOffset>0x30</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>FRAME_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BUFFER_STATUS</name>
+          <description>Buffer status; overflow bits sticky, cleared by reset only. [access=ro]</description>
+          <addressOffset>0x34</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>LINEBUF_FILL</name>
+              <description>Line Buffer fill level (0..2048). [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LINEBUF_OVERFLOW</name>
+              <description>Line Buffer write refused. [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>SP_FIFO_OVERFLOW</name>
+              <description>Generic short packet dropped on full FIFO. [access=ro]</description>
+              <bitOffset>17</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>META_OVERFLOW</name>
+              <description>Embedded payload word lost on metadata path. [access=ro]</description>
+              <bitOffset>18</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>DMA_OVERFLOW</name>
+              <description>DMA RAW FIFO/line/region overflow (MAS v1.4). [access=ro]</description>
+              <bitOffset>19</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>LANE_ALIGN_STATUS</name>
+          <description>Lane alignment status. [access=ro]</description>
+          <addressOffset>0x38</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>LM_FSM_STATE</name>
+              <description>Burst FSM: 0 IDLE, 1 ARMING, 2 ALIGNED, 3 DRAIN, 4 ABORT. [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>3</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ABORT_SYNC_ERR</name>
+              <description>Last abort caused by errsotsynchs. [access=ro]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ABORT_FIFO_FULL</name>
+              <description>Last abort caused by PHY Delay FIFO full while unarmed. [access=ro]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ABORT_UNARMED</name>
+              <description>Last abort caused by burst closing while unarmed. [access=ro]</description>
+              <bitOffset>5</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>DESKEW_BURST_SEEN</name>
+              <description>Sticky: deskew burst classified and skipped. [access=ro]</description>
+              <bitOffset>6</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ABORT_LANE_SYNC_SEEN</name>
+              <description>Per-lane sync_seen snapshot at abort; 0 = failing lane. [access=ro]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>4</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>GLOBAL_IRQ_ENABLE</name>
+          <description>Global interrupt enable. [access=rw]</description>
+          <addressOffset>0x40</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>GLOBAL_ENABLE</name>
+              <description>Master enable of csi2_irq. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IRQ_STATUS</name>
+          <description>Interrupt status, 24 sources, write 1 to clear; set wins over clear. Write response held until cleared bits read 0 (&lt;= IRQ_CLR_TIMEOUT). [access=w1c]</description>
+          <addressOffset>0x44</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <modifiedWriteValues>oneToClear</modifiedWriteValues>
+          <fields>
+            <field>
+              <name>FRAME_LEVEL_ERR_VC0</name>
+              <description>VC0 frame had CRC/WC/lane-abort error (at Frame End). [access=w1c]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FRAME_SYNC_ERR_VC0</name>
+              <description>VC0 frame identification failure. [access=w1c]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FRAME_LEVEL_ERR_VC1</name>
+              <description>VC1 frame had CRC/WC/lane-abort error (at Frame End). [access=w1c]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FRAME_SYNC_ERR_VC1</name>
+              <description>VC1 frame identification failure. [access=w1c]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>CRC_ERROR</name>
+              <description>Payload CRC-16 mismatch. [access=w1c]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>ECC_1BIT_ERROR</name>
+              <description>Header single-bit ECC error corrected. [access=w1c]</description>
+              <bitOffset>5</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>ECC_2BIT_ERROR</name>
+              <description>Uncorrectable header ECC error. [access=w1c]</description>
+              <bitOffset>6</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>UNSUPPORTED_DT</name>
+              <description>Long packet with unsupported Data Type. [access=w1c]</description>
+              <bitOffset>7</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>WC_CORRUPTION</name>
+              <description>Burst ended with non-zero remaining byte count. [access=w1c]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>SOT_ERROR</name>
+              <description>errsoths on any lane. [access=w1c]</description>
+              <bitOffset>9</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>SOT_SYNC_ERROR</name>
+              <description>errsotsynchs on any lane. [access=w1c]</description>
+              <bitOffset>10</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>STOP_STATE</name>
+              <description>Clock lane entered Stop State. [access=w1c]</description>
+              <bitOffset>11</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>LINE_BUFFER_FULL</name>
+              <description>Line Buffer reached watermark (sensor path only). [access=w1c]</description>
+              <bitOffset>12</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>BUFFER_OVERFLOW</name>
+              <description>Line buffer/SP FIFO/metadata/DMA overflow; see BUFFER_STATUS. [access=w1c]</description>
+              <bitOffset>13</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FRAME_DROPPED</name>
+              <description>Capture not delivered on every enabled path. [access=w1c]</description>
+              <bitOffset>14</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FRAME_RECEIVED</name>
+              <description>Capture ended and delivered on stream path. [access=w1c]</description>
+              <bitOffset>15</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>BUF_DONE_OK</name>
+              <description>Ping-pong buffer released as SW_OWNED_VALID. [access=w1c]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>BUF_DONE_ERR</name>
+              <description>Ping-pong buffer released as SW_OWNED_ERROR. [access=w1c]</description>
+              <bitOffset>17</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>AXI_WRITE_ERROR</name>
+              <description>DMA write got SLVERR/DECERR. [access=w1c]</description>
+              <bitOffset>18</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>LANE_ALIGN_ABORT</name>
+              <description>Lane Management discarded a burst. [access=w1c]</description>
+              <bitOffset>19</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>RESOLUTION_MISMATCH</name>
+              <description>Frame geometry differs from EXPECTED_RESOLUTION. [access=w1c]</description>
+              <bitOffset>20</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>ERR_WC_ALIGN</name>
+              <description>Line ended mid pixel-packing unit. [access=w1c]</description>
+              <bitOffset>21</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FMTBRIDGE_OVERFLOW</name>
+              <description>Format Bridge output beat lost. [access=w1c]</description>
+              <bitOffset>22</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+            <field>
+              <name>FRAME_NUM_SEQ_ERR</name>
+              <description>Sensor frame number did not advance by one. [access=w1c]</description>
+              <bitOffset>23</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IRQ_ENABLE</name>
+          <description>Per-source interrupt mask, mirrors IRQ_STATUS. [access=rw]</description>
+          <addressOffset>0x48</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>IRQ_ENABLE_MASK</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>24</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>ECC_ERROR_COUNT</name>
+          <description>ECC error counters, each saturating at 0xFFFF. [access=ro]</description>
+          <addressOffset>0x4c</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>ECC_1BIT_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ECC_2BIT_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>CRC_ERROR_COUNT</name>
+          <description>Payload CRC-16 error count, saturating. [access=ro]</description>
+          <addressOffset>0x50</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>CRC_ERROR_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FRAME_DROP_COUNT</name>
+          <description>Dropped capture count, saturating. [access=ro]</description>
+          <addressOffset>0x54</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>FRAME_DROP_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>LANE_ABORT_COUNT</name>
+          <description>Bursts discarded by Lane Management, saturating at 0xFFFF. [access=ro]</description>
+          <addressOffset>0x58</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>LANE_ABORT_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>VC0_IMAGE_INFO1</name>
+          <description>Geometry of last published frame on VC0. [access=ro]</description>
+          <addressOffset>0x60</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>BYTE_COUNT</name>
+              <description>Payload bytes of one image long packet (last line). [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LINE_COUNT</name>
+              <description>Image lines of the frame. [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>VC0_IMAGE_INFO2</name>
+          <description>Data Type and resolution check of last published frame on VC0. [access=ro]</description>
+          <addressOffset>0x64</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DATA_TYPE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>6</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>WIDTH_MISMATCH</name>
+              <description> [access=ro]</description>
+              <bitOffset>6</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>HEIGHT_MISMATCH</name>
+              <description> [access=ro]</description>
+              <bitOffset>7</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>VC1_IMAGE_INFO1</name>
+          <description>Geometry of last published frame on VC1. [access=ro]</description>
+          <addressOffset>0x68</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>BYTE_COUNT</name>
+              <description>Payload bytes of one image long packet (last line). [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>LINE_COUNT</name>
+              <description>Image lines of the frame. [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>VC1_IMAGE_INFO2</name>
+          <description>Data Type and resolution check of last published frame on VC1. [access=ro]</description>
+          <addressOffset>0x6c</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DATA_TYPE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>6</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>WIDTH_MISMATCH</name>
+              <description> [access=ro]</description>
+              <bitOffset>6</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>HEIGHT_MISMATCH</name>
+              <description> [access=ro]</description>
+              <bitOffset>7</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>GENERIC_SHORT_PACKET</name>
+          <description>Head of generic short-packet FIFO (DT 0x08..0x0F). Read pops the entry; empty FIFO reads 0. [access=ro]</description>
+          <addressOffset>0x70</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DATA_TYPE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>6</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>VIRTUAL_CHANNEL</name>
+              <description> [access=ro]</description>
+              <bitOffset>6</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>DATA</name>
+              <description> [access=ro]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMBEDDED_DATA_INFO_VC0</name>
+          <description>Embedded-data accounting, last published frame on VC0. [access=ro]</description>
+          <addressOffset>0x74</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>EMBEDDED_WORD_COUNT_VC0</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>EMBEDDED_LINE_COUNT_VC0</name>
+              <description> [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMBEDDED_DATA_INFO_VC1</name>
+          <description>Embedded-data accounting, last published frame on VC1. [access=ro]</description>
+          <addressOffset>0x78</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>EMBEDDED_WORD_COUNT_VC1</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>EMBEDDED_LINE_COUNT_VC1</name>
+              <description> [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>METADATA_RECORD_ID</name>
+          <description>Software handle written into the metadata record; sampled when a capture opens. [access=rw]</description>
+          <addressOffset>0x7c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>METADATA_RECORD_ID</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FRAME_ID</name>
+          <description>frame_id of the capture held in each ping-pong buffer. [access=ro]</description>
+          <addressOffset>0x80</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>FRAME_ID_BUF0</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>14</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>FRAME_ID_BUF1</name>
+              <description> [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>14</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>TIMESTAMP_LO</name>
+          <description>Timestamp [31:0] of last published capture (ns). Read snapshots HI into a shadow; read LO first. [access=ro]</description>
+          <addressOffset>0x84</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>TIMESTAMP_LO</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>TIMESTAMP_HI</name>
+          <description>Timestamp [63:32], from shadow taken at TIMESTAMP_LO read. [access=ro]</description>
+          <addressOffset>0x88</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>TIMESTAMP_HI</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DMA_CONTROL</name>
+          <description>DMA control. [access=rw]</description>
+          <addressOffset>0x90</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x10</resetValue>
+          <fields>
+            <field>
+              <name>DMA_ENABLE</name>
+              <description>Enable DMA path; clearing it aborts buffers in ST_WRITE. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>DMA_START</name>
+              <description>Allow buffer claims; clear first to stop gracefully. [access=rw]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>DMA_ABORT</name>
+              <description>Level: no claim, every buffer in ST_WRITE aborted. [access=rw]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>DMA_FORMAT</name>
+              <description>0 = packed RAW10/RAW12, 1 = RAW16. Change only while DMA_ENABLE=0 and idle. [access=rw]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>ERR_FRAME_POLICY</name>
+              <description>Sampled at claim. 0 = aborted buffer returns free; 1 = released SW_OWNED_ERROR. [access=rw]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DMA_BUFFER0_ADDR</name>
+          <description>DDR base of ping-pong buffer 0; bits [2:0] ignored. [access=rw]</description>
+          <addressOffset>0x94</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DMA_BUFFER0_ADDR</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DMA_BUFFER1_ADDR</name>
+          <description>DDR base of ping-pong buffer 1; bits [2:0] ignored. [access=rw]</description>
+          <addressOffset>0x98</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DMA_BUFFER1_ADDR</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DMA_BUFFER_SIZE</name>
+          <description>Size of the RAW region of one channel; buffer = 2*(this + META_AREA_SIZE). [access=rw]</description>
+          <addressOffset>0x9c</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DMA_BUFFER_SIZE</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DMA_ATTR</name>
+          <description>DMA AXI attributes; sampled at claim. [access=mixed]</description>
+          <addressOffset>0xa0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0xff0</resetValue>
+          <fields>
+            <field>
+              <name>AWQOS</name>
+              <description>m_axi4_awqos. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>4</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>MAX_BURST_LEN</name>
+              <description>AWLEN encoding (beats-1), clamped to MAX_BURST_BEATS-1. [access=rw]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>AWPROT</name>
+              <description>m_axi4_awprot. [access=rw]</description>
+              <bitOffset>12</bitOffset>
+              <bitWidth>3</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>MAX_OUTSTANDING</name>
+              <description>Read-back of build parameter MAX_OUTSTANDING (8). [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>7</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DMA_STATUS</name>
+          <description>DMA status. [access=ro]</description>
+          <addressOffset>0xa4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>DMA_BUSY</name>
+              <description>Any buffer in WRITE/DRAIN/ABORT. [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>ACTIVE_BUFFER</name>
+              <description>Buffer most recently claimed. [access=ro]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>LINE_PITCH</name>
+          <description>Line pitch in DDR; stride = BYTES_PER_LINE + LINE_PADDING (multiple of 8). [access=rw]</description>
+          <addressOffset>0xa8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>BYTES_PER_LINE</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>LINE_PADDING</name>
+              <description> [access=rw]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BUFFER_OWNERSHIP</name>
+          <description>Per-buffer ownership: 00 HW_OWNED, 01 SW_OWNED_VALID, 10 SW_OWNED_ERROR. [access=ro]</description>
+          <addressOffset>0xac</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>BUF0_STATE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>BUF1_STATE</name>
+              <description> [access=ro]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BUFFER_RELEASE</name>
+          <description>Write 1 to return a software-owned buffer to the DMA. [access=wo]</description>
+          <addressOffset>0xb0</addressOffset>
+          <size>32</size>
+          <access>write-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>RELEASE_BUF0</name>
+              <description> [access=wo]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>write-only</access>
+            </field>
+            <field>
+              <name>RELEASE_BUF1</name>
+              <description> [access=wo]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>write-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>BUFFER_ERROR_INFO</name>
+          <description>Last line (from 0) written OKAY per buffer; 0xFFFF if none. [access=ro]</description>
+          <addressOffset>0xb4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>BUF0_LAST_VALID_LINE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>BUF1_LAST_VALID_LINE</name>
+              <description> [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>META_AREA_SIZE</name>
+          <description>Size of one channel's metadata area (&gt;= 0x80 + max embedded payload). MAS v1.4. [access=rw]</description>
+          <addressOffset>0xb8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>META_AREA_SIZE</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>TPG_CONTROL</name>
+          <description>Test Pattern Generator control; fields except TPG_ENABLE apply from next frame. [access=rw]</description>
+          <addressOffset>0xc0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>TPG_ENABLE</name>
+              <description>Start TPG and select it as video source (TPG Mux). [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>PATTERN</name>
+              <description>0 = vertical bars, 1 = horizontal bars. [access=rw]</description>
+              <bitOffset>1</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>TPG_DUAL_VC_EN</name>
+              <description>Interleave VC0/VC1 lines. [access=rw]</description>
+              <bitOffset>2</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>TPG_PIXEL_FORMAT</name>
+              <description>0 = RAW12, 1 = RAW10. [access=rw]</description>
+              <bitOffset>3</bitOffset>
+              <bitWidth>1</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>TPG_CFA_ORDER</name>
+              <description>00 RGGB, 01 GRBG, 10 GBRG, 11 BGGR (MAS v1.4). [access=rw]</description>
+              <bitOffset>4</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>ERROR_CAPTURE</name>
+          <description>First protocol error of newest capture with an error; cleared by SOFT_RESET. [access=ro]</description>
+          <addressOffset>0xc4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>FAULT_LINE_NUMBER</name>
+              <description>Lines completed on that channel; 0xFFFF if channel unknown. [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>FAULT_FRAME_ID</name>
+              <description>frame_id of the capture; 0 = nothing captured. [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>14</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>FAULT_VC</name>
+              <description>00 VC0, 01 VC1, 11 unknown. [access=ro]</description>
+              <bitOffset>30</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>AXI_FAULT_TRACE</name>
+          <description>First faulting AXI write since last soft reset. [access=ro]</description>
+          <addressOffset>0xc8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>AWID</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>RESP</name>
+              <description> [access=ro]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>2</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>AXI_FAULT_ADDR</name>
+          <description>Address of first faulting AXI write since last soft reset. [access=ro]</description>
+          <addressOffset>0xcc</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>FAULT_AWADDR</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>AXI_ERROR_COUNT</name>
+          <description>SLVERR/DECERR write-response counters, saturating. [access=ro]</description>
+          <addressOffset>0xd0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>BRESP_SLVERR_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>BRESP_DECERR_COUNT</name>
+              <description> [access=ro]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>TPG_RESOLUTION</name>
+          <description>TPG active size; width truncated to multiple of 4, min 8x8. [access=rw]</description>
+          <addressOffset>0xd4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>TPG_WIDTH</name>
+              <description> [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>TPG_HEIGHT</name>
+              <description>Lines per Virtual Channel. [access=rw]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>TPG_BLANKING</name>
+          <description>TPG blanking. [access=rw]</description>
+          <addressOffset>0xd8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>TPG_HBLANK</name>
+              <description>sys_clk cycles after each line. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>TPG_VBLANK</name>
+              <description>Blank line-times after each frame. [access=rw]</description>
+              <bitOffset>16</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMB_EXTRACT_CFG0</name>
+          <description>Extraction slot 0 descriptor. [access=rw]</description>
+          <addressOffset>0xe0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>LEN</name>
+              <description>Field length in bytes. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>3</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>BYTE_OFFSET</name>
+              <description> [access=rw]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>LINE_IDX</name>
+              <description>Embedded line index. [access=rw]</description>
+              <bitOffset>24</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMB_EXTRACT_CFG1</name>
+          <description>Extraction slot 1 descriptor. [access=rw]</description>
+          <addressOffset>0xe4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>LEN</name>
+              <description>Field length in bytes. [access=rw]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>3</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>BYTE_OFFSET</name>
+              <description> [access=rw]</description>
+              <bitOffset>8</bitOffset>
+              <bitWidth>16</bitWidth>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>LINE_IDX</name>
+              <description>Embedded line index. [access=rw]</description>
+              <bitOffset>24</bitOffset>
+              <bitWidth>8</bitWidth>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMB_EXTRACT_VC0_VAL0</name>
+          <description>Field captured by slot 0 on VC0 in last published frame. [access=ro]</description>
+          <addressOffset>0xe8</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>VALUE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMB_EXTRACT_VC0_VAL1</name>
+          <description>Field captured by slot 1 on VC0 in last published frame. [access=ro]</description>
+          <addressOffset>0xec</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>VALUE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMB_EXTRACT_VC1_VAL0</name>
+          <description>Field captured by slot 0 on VC1 in last published frame. [access=ro]</description>
+          <addressOffset>0xf0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>VALUE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>EMB_EXTRACT_VC1_VAL1</name>
+          <description>Field captured by slot 1 on VC1 in last published frame. [access=ro]</description>
+          <addressOffset>0xf4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <fields>
+            <field>
+              <name>VALUE</name>
+              <description> [access=ro]</description>
+              <bitOffset>0</bitOffset>
+              <bitWidth>32</bitWidth>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+      </registers>
+    </peripheral>
   </peripherals>
 </device>

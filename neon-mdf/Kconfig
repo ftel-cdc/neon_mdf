@@ -11,4 +11,8 @@ rsource "components/driver/Kconfig"
 # Projects/Examples/Blinky/Kconfig.
 osource "$(NEON_MDF_APP_KCONFIG)"
 
-rsource "components/ftel_isp/Kconfig"
+menu "FTEL FX1 camera stack"
+
+rsource "components/neon_camera_runtime/Kconfig"
+
+endmenu

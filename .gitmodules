@@ -1,0 +1,4 @@
+[submodule "VP"]
+	path = VP
+	url = git@github.com:duyphan95z/fx1.git
+	branch = dev

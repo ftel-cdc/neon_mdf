@@ -79,4 +79,8 @@
 #include "wdt/neon_wdt.h"
 #endif
 
+#if NEON_ETH_MODULE_ENABLED == 1
+#include "eth/neon_eth.h"
+#endif
+
 #endif /* __NEON_H__ */

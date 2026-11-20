@@ -1,0 +1,25 @@
+config NEON_MDF_CAMERA_RUNTIME
+    bool "Build Neon camera runtime"
+    default n
+    select NEON_MDF_DRIVER_MIPI
+    select NEON_MDF_DRIVER_CSI
+    select NEON_MDF_DRIVER_ISP
+    help
+        Owns one camera pipeline, camera profiles, sensor HAL binding and 3A.
+        Hardware access remains in the reusable driver components.
+
+if NEON_MDF_CAMERA_RUNTIME
+
+choice NEON_MDF_CAMERA_SENSOR
+    prompt "Reference sensor module"
+    default NEON_MDF_CAMERA_SENSOR_IMX675
+
+config NEON_MDF_CAMERA_SENSOR_IMX675
+    bool "IMX675"
+
+config NEON_MDF_CAMERA_SENSOR_OS04C10
+    bool "OS04C10"
+
+endchoice
+
+endif

@@ -1,0 +1,4 @@
+{
+  "version": 6,
+  "include": ["../../neon-mdf/cmake/presets/targets.json"]
+}

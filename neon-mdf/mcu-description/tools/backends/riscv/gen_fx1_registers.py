@@ -10,7 +10,7 @@ ACCESS = {name: i for i, name in enumerate(
     ("ro", "rw", "w1c", "w1s", "w1p", "w1sc", "mixed", "unknown", "wo"))}
 BASE_MACROS = {"CLINT": "CLINT", "PLIC": "PLIC", "UART": "UART", "SYS_DMA": "SYS_DMA_CSR",
                "SIM_CTRL": "SIM_CTRL", "I2C0": "I2C0", "ISP": "ISP_CSR", "NPU": "NPU_CSR",
-               "H264_H265": "H264_H265_CSR", "ETH": "ETH_CSR", "MIPI": "MIPI_CSR",
+               "H264_H265": "H264_H265_CSR", "ETH": "ETH_CSR", "MIPI_CSI2": "MIPI_CSR",
                "DDR3": "DDR3_CSR", "DDR_SYSCTRL": "DDR_SYSCTRL"}
 
 
@@ -126,6 +126,13 @@ def register_header(device):
         for reg in p.registers:
             lines.append(f'NEON_FX1_OFFSET_ASSERT(offsetof({prefix}_Regs_t, {reg.name}) == '
                          f'{prefix}_{reg.name}_OFFSET, "{p.name}.{reg.name}");')
+        # Danh sách X-macro theo thứ tự offset tăng dần, để firmware kiểm một offset lấy từ dữ liệu ngoài
+        # (ví dụ profile tuning) mà không phải chép tay bảng thanh ghi.
+        lines.append(f"#define {prefix}_REGISTER_COUNT {len(p.registers)}u")
+        lines.append(f"#define {prefix}_REGISTER_LIST(X) \\")
+        for reg in p.registers:
+            lines.append(f"    X({reg.name}, 0x{reg.offset:08X}u, NEON_FX1_ACCESS_{reg.access.upper()}) \\")
+        lines.append("    /* hết danh sách */")
     lines += ["#undef NEON_FX1_OFFSET_ASSERT", "#endif", ""]
     # Public ISP names resolve to the canonical FX1 BSP definitions.
     isp = next(p for p in device.peripherals if p.name == "ISP")
